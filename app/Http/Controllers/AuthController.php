@@ -8,18 +8,27 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 
-class AuthController
+class AuthController extends Controller
 {
+    /**
+     * Show login page
+     */
     public function showLogin()
     {
         return view('auth.login');
     }
 
+    /**
+     * Show register page
+     */
     public function showRegister()
     {
         return view('auth.register');
     }
 
+    /**
+     * Handle user registration
+     */
     public function register(Request $request)
     {
         try {
@@ -49,6 +58,9 @@ class AuthController
         }
     }
 
+    /**
+     * Handle user login
+     */
     public function login(Request $request)
     {
         $credentials = $request->validate([
@@ -58,6 +70,12 @@ class AuthController
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
+            
+            // Redirect to admin dashboard if user is admin
+            if (Auth::user()->is_admin) {
+                return redirect()->intended('/admin/dashboard')->with('success', '👋 Welcome back, Admin ' . Auth::user()->name . '!');
+            }
+            
             return redirect()->intended('/dashboard')->with('success', '👋 Welcome back, ' . Auth::user()->name . '!');
         }
 
@@ -66,6 +84,9 @@ class AuthController
         ])->onlyInput('email');
     }
 
+    /**
+     * Handle user logout
+     */
     public function logout(Request $request)
     {
         $userName = Auth::user()->name;

@@ -34,25 +34,25 @@
             <!-- Menu -->
             <div class="hidden md:flex items-center gap-8">
                 <a href="#about" class="text-gray-700 hover:text-orange-500 font-medium transition">About Us</a>
-                <a href="#course" class="text-gray-700 hover:text-orange-500 font-medium transition">Our Course</a>
+                <a href="/course" class="text-gray-700 hover:text-orange-500 font-medium transition">Our Course</a>
             </div>
             
             <!-- Sign In / Logout Button -->
-@auth
-    <div class="flex items-center gap-4">
-        <span class="text-gray-700 font-medium">Hi, {{ Auth::user()->name }}!</span>
-        <form action="/logout" method="POST">
-            @csrf
-            <button type="submit" class="bg-red-500 hover:bg-red-600 text-white font-bold px-6 py-2.5 rounded-lg transition-all hover:scale-105 shadow-lg">
-                Logout
-            </button>
-        </form>
-    </div>
-@else
-    <a href="/login" class="bg-orange-500 hover:bg-orange-600 text-white font-bold px-6 py-2.5 rounded-lg transition-all hover:scale-105 shadow-lg">
-        Sign In
-    </a>
-@endauth
+            @auth
+                <div class="flex items-center gap-4">
+                    <span class="text-gray-700 font-medium">Hi, {{ Auth::user()->name }}!</span>
+                    <form action="/logout" method="POST">
+                        @csrf
+                        <button type="submit" class="bg-red-500 hover:bg-red-600 text-white font-bold px-6 py-2.5 rounded-lg transition-all hover:scale-105 shadow-lg">
+                            Logout
+                        </button>
+                    </form>
+                </div>
+            @else
+                <a href="/login" class="bg-orange-500 hover:bg-orange-600 text-white font-bold px-6 py-2.5 rounded-lg transition-all hover:scale-105 shadow-lg">
+                    Sign In
+                </a>
+            @endauth
         </div>
     </nav>
 
@@ -67,9 +67,9 @@
                 <p class="text-gray-600 text-lg mb-8 leading-relaxed">
                     Kini program otak-atik ini hadir lho, untuk putra-putrimu dibuat yang merancang masa depan!
                 </p>
-                <button class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-8 py-4 rounded-lg transition-all hover:scale-105 shadow-lg">
-                    Start Learn Watching
-                </button>
+                <a href="/course" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-8 py-4 rounded-lg transition-all hover:scale-105 shadow-lg inline-block">
+                    Start Learning Now
+                </a>
             </div>
             <div class="md:w-1/2 animate-fade-in">
                 <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=600&h=400&fit=crop" 
@@ -117,9 +117,9 @@
                 <p class="text-gray-600 text-lg leading-relaxed mb-6">
                     YUK BELAJAR dengan OtakAtik Academy juga mulai menangani keternak-malas, kelik suka membuang-buang waktu, bahkan anak yang tidak percaya diri.
                 </p>
-                <button class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-8 py-4 rounded-lg transition-all hover:scale-105 shadow-lg">
+                <a href="/course" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-8 py-4 rounded-lg transition-all hover:scale-105 shadow-lg inline-block">
                     Start Now!
-                </button>
+                </a>
             </div>
         </div>
     </section>
@@ -162,9 +162,9 @@
             <p class="text-2xl text-gray-700 mb-8">
                 Saatnya upgrade skill bareng<br><span class="font-bold">OtakAtik.</span>
             </p>
-            <button class="bg-orange-500 hover:bg-orange-600 text-white font-bold px-12 py-4 rounded-lg transition-all hover:scale-105 shadow-lg text-lg">
+            <a href="/course" class="bg-orange-500 hover:bg-orange-600 text-white font-bold px-12 py-4 rounded-lg transition-all hover:scale-105 shadow-lg text-lg inline-block">
                 Join Now!
-            </button>
+            </a>
         </div>
     </section>
 
