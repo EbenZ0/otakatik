@@ -16,7 +16,7 @@ return [
     |
     */
 
-    'default' => env('DB_CONNECTION', 'sqlite'),
+    'default' => env('DB_CONNECTION', 'oracle'),
 
     /*
     |--------------------------------------------------------------------------
@@ -111,6 +111,30 @@ return [
             'prefix_indexes' => true,
             // 'encrypt' => env('DB_ENCRYPT', 'yes'),
             // 'trust_server_certificate' => env('DB_TRUST_SERVER_CERTIFICATE', 'false'),
+        ],
+
+        'oracle' => [
+            'driver' => 'oracle',
+            'host' => env('DB_HOST', '127.0.0.1'),
+            'port' => env('DB_PORT', '1521'),
+            'database' => env('DB_DATABASE', 'otakatik'),
+            'service_name' => env('DB_SERVICE_NAME', 'XE'),
+            'username' => env('DB_USERNAME', 'system'),
+            'password' => env('DB_PASSWORD', '12345678'),
+            'charset' => 'AL32UTF8',
+            'prefix' => '',
+            'prefix_schema' => env('DB_SCHEMA_PREFIX', ''),
+            'edition' => env('DB_EDITION', ''),
+            'server_version' => env('DB_SERVER_VERSION', '11g'),
+            'load_balance' => env('DB_LOAD_BALANCE', 'yes'),
+            'dynamic' => [],
+            'session_vars' => [
+                'NLS_TIME_FORMAT' => 'HH24:MI:SS',
+                'NLS_DATE_FORMAT' => 'YYYY-MM-DD HH24:MI:SS',
+                'NLS_TIMESTAMP_FORMAT' => 'YYYY-MM-DD HH24:MI:SS',
+                'NLS_TIMESTAMP_TZ_FORMAT' => 'YYYY-MM-DD HH24:MI:SS TZH:TZM',
+                'NLS_NUMERIC_CHARACTERS' => '.,',
+            ],
         ],
 
     ],

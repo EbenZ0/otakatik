@@ -6,6 +6,16 @@
     <title>My Courses - OtakAtik Academy</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .progress-ring {
+            transform: rotate(-90deg);
+        }
+        .progress-ring__circle {
+            transition: stroke-dashoffset 0.35s;
+            transform: rotate(90deg);
+            transform-origin: 50% 50%;
+        }
+    </style>
 </head>
 <body class="bg-gray-50">
     
@@ -25,6 +35,7 @@
                 <a href="/dashboard" class="text-gray-700 hover:text-orange-500 font-medium transition">About Us</a>
                 <a href="/course" class="text-gray-700 hover:text-orange-500 font-medium transition">Our Course</a>
                 <a href="/my-courses" class="text-orange-500 font-medium transition">My Courses</a>
+                <a href="/purchase-history" class="text-gray-700 hover:text-orange-500 font-medium transition">History</a>
             </div>
             
             <!-- User Info -->
@@ -42,76 +53,158 @@
 
     <!-- My Courses Section -->
     <section class="pt-32 pb-20 px-6">
-        <div class="max-w-6xl mx-auto">
+        <div class="max-w-7xl mx-auto">
             <div class="text-center mb-12">
                 <h1 class="text-4xl font-bold text-gray-800 mb-4">My Courses</h1>
-                <p class="text-gray-600 text-lg">Lihat semua course yang telah Anda daftar</p>
+                <p class="text-gray-600 text-lg">Lihat progress dan kelola kursus yang Anda ikuti</p>
             </div>
 
-            @if($courses->count() > 0)
-                <div class="grid gap-6">
-                    @foreach($courses as $course)
-                    <div class="bg-white rounded-xl shadow-md p-6 border-l-4 
-                        @if($course->status == 'paid') border-green-500 
-                        @elseif($course->status == 'pending') border-yellow-500 
-                        @else border-red-500 @endif">
-                        <div class="flex flex-col md:flex-row md:items-center justify-between">
-                            <div class="flex-1">
-                                <div class="flex items-center gap-4 mb-3">
-                                    <h3 class="text-xl font-bold text-gray-800">{{ $course->course }}</h3>
-                                    <span class="px-3 py-1 rounded-full text-xs font-medium
-                                        @if($course->status == 'paid') bg-green-100 text-green-800
-                                        @elseif($course->status == 'pending') bg-yellow-100 text-yellow-800
-                                        @else bg-red-100 text-red-800 @endif">
-                                        {{ ucfirst($course->status) }}
-                                    </span>
-                                </div>
-                                
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-600">
-                                    <div>
-                                        <p><strong>Nama:</strong> {{ $course->nama_lengkap }}</p>
-                                        <p><strong>TTL:</strong> {{ $course->ttl }}</p>
-                                        <p><strong>Lokasi:</strong> {{ $course->tempat_tinggal }}</p>
-                                        <p><strong>Gender:</strong> {{ $course->gender }}</p>
-                                    </div>
-                                    <div>
-                                        <p><strong>Sub Course 1:</strong> {{ $course->sub_course1 }}</p>
-                                        <p><strong>Sub Course 2:</strong> {{ $course->sub_course2 }}</p>
-                                        <p><strong>Kelas:</strong> {{ $course->kelas }}</p>
-                                        <p><strong>Harga:</strong> Rp{{ number_format($course->price, 0, ',', '.') }}</p>
+            @if($enrolledCourses->count() > 0)
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    @foreach($enrolledCourses as $registration)
+                    @php
+                        $course = $registration->course;
+                        $progress = $registration->progress;
+                        $strokeDasharray = 2 * 3.1416 * 45; // 2*pi*r
+                        $strokeDashoffset = $strokeDasharray - ($progress / 100) * $strokeDasharray;
+                    @endphp
+                    
+                    <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300">
+                        <!-- Course Header -->
+                        <div class="h-32 bg-gradient-to-r from-blue-500 to-purple-600 relative">
+                            <div class="absolute top-4 right-4">
+                                <div class="relative w-20 h-20">
+                                    <svg class="w-20 h-20 progress-ring" width="80" height="80">
+                                        <circle
+                                            class="text-gray-200"
+                                            stroke-width="6"
+                                            stroke="currentColor"
+                                            fill="transparent"
+                                            r="36"
+                                            cx="40"
+                                            cy="40"
+                                        />
+                                        <circle
+                                            class="progress-ring__circle text-green-500"
+                                            stroke-width="6"
+                                            stroke-linecap="round"
+                                            stroke="currentColor"
+                                            fill="transparent"
+                                            r="36"
+                                            cx="40"
+                                            cy="40"
+                                            stroke-dasharray="{{ $strokeDasharray }}"
+                                            stroke-dashoffset="{{ $strokeDashoffset }}"
+                                        />
+                                    </svg>
+                                    <div class="absolute inset-0 flex items-center justify-center">
+                                        <span class="text-white font-bold text-sm">{{ $progress }}%</span>
                                     </div>
                                 </div>
                             </div>
+                            <div class="absolute bottom-4 left-4 text-white">
+                                <h3 class="text-xl font-bold">{{ $course->title }}</h3>
+                                <p class="text-sm opacity-90">{{ $course->type }}</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Course Content -->
+                        <div class="p-6">
+                            <!-- Progress Info -->
+                            <div class="mb-4">
+                                <div class="flex justify-between text-sm text-gray-600 mb-2">
+                                    <span>Progress Belajar</span>
+                                    <span class="font-bold text-green-600">{{ $progress }}%</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-2">
+                                    <div class="bg-green-500 h-2 rounded-full" style="width: {{ $progress }}%"></div>
+                                </div>
+                            </div>
                             
-                            <div class="mt-4 md:mt-0 md:text-right">
-                                <p class="text-sm text-gray-500 mb-2">Didaftarkan pada</p>
-                                <p class="text-sm font-medium text-gray-700">
-                                    {{ $course->created_at->format('d M Y H:i') }}
-                                </p>
-                                @if($course->status == 'pending')
-                                <form action="{{ route('course.destroy', $course->id) }}" method="POST" class="mt-2">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="text-red-500 hover:text-red-700 text-sm" 
-                                            onclick="return confirm('Yakin ingin membatalkan pendaftaran ini?')">
-                                        <i class="fas fa-trash mr-1"></i>Batalkan
-                                    </button>
-                                </form>
+                            <!-- Course Details -->
+                            <div class="space-y-2 text-sm text-gray-600 mb-4">
+                                <div class="flex items-center gap-2">
+                                    <i class="fas fa-user-tie w-4"></i>
+                                    <span>Instruktur: {{ $course->instructor->name ?? 'Tidak tersedia' }}</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <i class="fas fa-calendar w-4"></i>
+                                    <span>Bergabung: {{ $registration->enrolled_at->format('d M Y') }}</span>
+                                </div>
+                                @if($registration->completed_at)
+                                <div class="flex items-center gap-2 text-green-600">
+                                    <i class="fas fa-check-circle w-4"></i>
+                                    <span>Selesai: {{ $registration->completed_at->format('d M Y') }}</span>
+                                </div>
                                 @endif
+                            </div>
+                            
+                            <!-- Action Buttons -->
+                            <div class="flex gap-2">
+                                <a href="{{ route('course.show', $course->id) }}" 
+                                   class="flex-1 bg-blue-500 hover:bg-blue-600 text-white text-center py-2 px-4 rounded-lg transition-all text-sm font-medium">
+                                    <i class="fas fa-play mr-1"></i> Lanjutkan
+                                </a>
+                                <button class="bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded-lg transition-all text-sm">
+                                    <i class="fas fa-ellipsis-h"></i>
+                                </button>
                             </div>
                         </div>
                     </div>
                     @endforeach
                 </div>
             @else
-                <div class="text-center py-12">
-                    <i class="fas fa-book-open text-6xl text-gray-300 mb-4"></i>
-                    <h3 class="text-xl font-semibold text-gray-600 mb-2">Belum ada course yang didaftarkan</h3>
-                    <p class="text-gray-500 mb-6">Yuk daftar course pertama Anda sekarang!</p>
-                    <a href="/course" class="bg-orange-500 hover:bg-orange-600 text-white font-bold px-6 py-3 rounded-lg transition-all">
-                        Daftar Course Sekarang
-                    </a>
+                <!-- Empty State -->
+                <div class="text-center py-16 bg-white rounded-2xl shadow-lg">
+                    <div class="max-w-md mx-auto">
+                        <div class="w-32 h-32 bg-gradient-to-br from-orange-500 to-orange-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <i class="fas fa-book-open text-white text-4xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-gray-800 mb-4">Anda Tidak Memiliki Course</h3>
+                        <p class="text-gray-600 mb-8">Mulai perjalanan belajar Anda dengan mendaftar course pertama!</p>
+                        <a href="/course" class="inline-block bg-orange-500 hover:bg-orange-600 text-white font-bold px-8 py-4 rounded-lg transition-all hover:scale-105 shadow-lg">
+                            <i class="fas fa-shopping-cart mr-2"></i> Beli Course Sekarang
+                        </a>
+                    </div>
                 </div>
+            @endif
+
+            <!-- Overall Progress Card -->
+            @if($enrolledCourses->count() > 0)
+            <div class="mt-12 bg-gradient-to-r from-blue-600 to-purple-700 rounded-2xl shadow-lg p-8 text-white">
+                <h3 class="text-2xl font-bold mb-6 text-center">Progress Belajar Keseluruhan</h3>
+                
+                <div class="grid md:grid-cols-3 gap-8">
+                    <div class="text-center">
+                        <div class="text-4xl font-bold mb-2">{{ $enrolledCourses->count() }}</div>
+                        <p class="text-blue-100">Total Course</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-4xl font-bold mb-2">{{ $enrolledCourses->where('progress', 100)->count() }}</div>
+                        <p class="text-blue-100">Course Selesai</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-4xl font-bold mb-2">{{ number_format($overallProgress, 1) }}%</div>
+                        <p class="text-blue-100">Rata-rata Progress</p>
+                    </div>
+                </div>
+                
+                <!-- Progress Bars for Each Course -->
+                <div class="mt-8 space-y-4">
+                    <h4 class="text-lg font-semibold mb-4">Detail Progress per Course</h4>
+                    @foreach($enrolledCourses as $registration)
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm">{{ $registration->course->title }}</span>
+                        <div class="flex items-center gap-3">
+                            <div class="w-32 bg-blue-400 rounded-full h-2">
+                                <div class="bg-white h-2 rounded-full" style="width: {{ $registration->progress }}%"></div>
+                            </div>
+                            <span class="text-sm font-bold w-12 text-right">{{ $registration->progress }}%</span>
+                        </div>
+                    </div>
+                    @endforeach
+                </div>
+            </div>
             @endif
         </div>
     </section>
@@ -129,6 +222,20 @@
             <p class="text-gray-500 text-sm">&copy; 2025 OtakAtik Academy. All rights reserved.</p>
         </div>
     </footer>
+
+    <script>
+        // Animate progress rings on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const rings = document.querySelectorAll('.progress-ring__circle');
+            rings.forEach(ring => {
+                const progress = parseInt(ring.parentElement.parentElement.querySelector('span').textContent);
+                const strokeDasharray = 2 * 3.1416 * 36;
+                const strokeDashoffset = strokeDasharray - (progress / 100) * strokeDasharray;
+                ring.style.strokeDasharray = strokeDasharray;
+                ring.style.strokeDashoffset = strokeDashoffset;
+            });
+        });
+    </script>
 
 </body>
 </html>

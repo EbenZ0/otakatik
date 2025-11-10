@@ -21,11 +21,14 @@ class User extends Authenticatable
         'email',
         'password',
         'is_admin',
+        'is_instructor',
         'age_range',
         'education_level',
         'location',
         'phone',
         'date_of_birth',
+        'bio',
+        'expertise'
     ];
 
     /**
@@ -49,6 +52,7 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'is_admin' => 'boolean',
+            'is_instructor' => 'boolean',
             'date_of_birth' => 'date',
         ];
     }
@@ -62,11 +66,35 @@ class User extends Authenticatable
     }
 
     /**
+     * Get the courses taught by the user (if instructor)
+     */
+    public function taughtCourses()
+    {
+        return $this->hasMany(Course::class, 'instructor_id');
+    }
+
+    /**
+     * Get assignment submissions for the user
+     */
+    public function assignmentSubmissions()
+    {
+        return $this->hasMany(AssignmentSubmission::class);
+    }
+
+    /**
      * Check if user is admin
      */
     public function isAdmin(): bool
     {
         return $this->is_admin;
+    }
+
+    /**
+     * Check if user is instructor
+     */
+    public function isInstructor(): bool
+    {
+        return $this->is_instructor;
     }
 
     /**
@@ -90,7 +118,13 @@ class User extends Authenticatable
      */
     public function getStatusBadgeClassAttribute(): string
     {
-        return $this->is_admin ? 'bg-purple-100 text-purple-800' : 'bg-green-100 text-green-800';
+        if ($this->is_admin) {
+            return 'bg-purple-100 text-purple-800';
+        } elseif ($this->is_instructor) {
+            return 'bg-blue-100 text-blue-800';
+        } else {
+            return 'bg-green-100 text-green-800';
+        }
     }
 
     /**
@@ -98,7 +132,13 @@ class User extends Authenticatable
      */
     public function getStatusTextAttribute(): string
     {
-        return $this->is_admin ? 'Admin' : 'User';
+        if ($this->is_admin) {
+            return 'Admin';
+        } elseif ($this->is_instructor) {
+            return 'Instructor';
+        } else {
+            return 'User';
+        }
     }
 
     /**
@@ -107,6 +147,22 @@ class User extends Authenticatable
     public function getCourseCountAttribute(): int
     {
         return $this->courseRegistrations->count();
+    }
+
+    /**
+     * Get user's enrolled courses (approved)
+     */
+    public function getEnrolledCoursesAttribute()
+    {
+        return $this->courseRegistrations()->where('status', 'paid')->with('course')->get();
+    }
+
+    /**
+     * Get user's pending course registrations
+     */
+    public function getPendingRegistrationsAttribute()
+    {
+        return $this->courseRegistrations()->where('status', 'pending')->with('course')->get();
     }
 
     /**
@@ -131,5 +187,13 @@ class User extends Authenticatable
     public function scopeByLocation($query, $location)
     {
         return $query->where('location', 'like', '%'.$location.'%');
+    }
+
+    /**
+     * Scope instructors only
+     */
+    public function scopeInstructors($query)
+    {
+        return $query->where('is_instructor', true);
     }
 }

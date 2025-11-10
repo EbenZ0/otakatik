@@ -4,6 +4,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\InstructorController;
 use Illuminate\Support\Facades\Route;
 
 // Home Route
@@ -14,6 +15,7 @@ Route::get('/', function () {
 // Public Routes
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 Route::get('/course', [CourseController::class, 'showCourse'])->name('course');
+Route::get('/course/{id}', [CourseController::class, 'show'])->name('course.show');
 
 // Auth Routes
 Route::middleware('guest')->group(function () {
@@ -30,9 +32,33 @@ Route::middleware('auth')->group(function () {
     // User Course Routes
     Route::get('/course-dashboard', [CourseController::class, 'dashboard'])->name('course.dashboard');
     Route::get('/my-courses', [CourseController::class, 'myCourses'])->name('my-courses');
+    Route::get('/purchase-history', [CourseController::class, 'purchaseHistory'])->name('purchase.history');
     Route::post('/course/register', [CourseController::class, 'register'])->name('course.register');
-    Route::get('/course/{id}', [CourseController::class, 'show'])->name('course.show');
     Route::delete('/course/{id}', [CourseController::class, 'destroy'])->name('course.destroy');
+});
+
+// Instructor Routes (Require Instructor Privileges)
+Route::middleware(['auth', 'instructor'])->prefix('instructor')->group(function () {
+    Route::get('/dashboard', [InstructorController::class, 'dashboard'])->name('instructor.dashboard');
+    Route::get('/courses', [InstructorController::class, 'courses'])->name('instructor.courses');
+    Route::get('/course/{id}', [InstructorController::class, 'showCourse'])->name('instructor.course.show');
+    Route::get('/course/{id}/students', [InstructorController::class, 'courseStudents'])->name('instructor.course.students');
+    
+    // Course Materials
+    Route::post('/course/{id}/materials', [InstructorController::class, 'storeMaterial'])->name('instructor.materials.store');
+    Route::delete('/materials/{id}', [InstructorController::class, 'deleteMaterial'])->name('instructor.materials.delete');
+    
+    // Course Assignments
+    Route::post('/course/{id}/assignments', [InstructorController::class, 'storeAssignment'])->name('instructor.assignments.store');
+    Route::put('/assignments/{id}', [InstructorController::class, 'updateAssignment'])->name('instructor.assignments.update');
+    Route::delete('/assignments/{id}', [InstructorController::class, 'deleteAssignment'])->name('instructor.assignments.delete');
+    
+    // Student Progress
+    Route::put('/students/{id}/progress', [InstructorController::class, 'updateStudentProgress'])->name('instructor.students.progress');
+    
+    // Assignment Submissions
+    Route::get('/assignments/{id}/submissions', [InstructorController::class, 'assignmentSubmissions'])->name('instructor.assignments.submissions');
+    Route::put('/submissions/{id}/grade', [InstructorController::class, 'gradeSubmission'])->name('instructor.submissions.grade');
 });
 
 // Admin Routes (Require Admin Privileges)
@@ -48,6 +74,10 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     
     // Course Management
     Route::get('/courses', [AdminController::class, 'courses'])->name('admin.courses');
+    Route::get('/courses/manage', [AdminController::class, 'manageCourses'])->name('admin.courses.manage');
+    Route::post('/courses', [AdminController::class, 'createCourse'])->name('admin.courses.create');
+    Route::put('/courses/{id}', [AdminController::class, 'updateCourse'])->name('admin.courses.update');
+    Route::delete('/courses/{id}', [AdminController::class, 'deleteCourse'])->name('admin.courses.delete');
     Route::put('/courses/{id}/status', [AdminController::class, 'updateCourseStatus'])->name('admin.courses.status');
     Route::get('/courses/export', [AdminController::class, 'exportCourses'])->name('admin.courses.export');
     
