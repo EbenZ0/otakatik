@@ -59,13 +59,13 @@
                         </a>
                     </li>
                     <li>
-                        <a href="#" class="flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-gray-700 rounded-lg transition-colors">
+                        <a href="/admin/financial" class="flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-gray-700 rounded-lg transition-colors">
                             <i class="fas fa-chart-bar w-5"></i>
                             <span>Financial Analytics</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#" class="flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-gray-700 rounded-lg transition-colors">
+                        <a href="/admin/refund" class="flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-gray-700 rounded-lg transition-colors">
                             <i class="fas fa-exchange-alt w-5"></i>
                             <span>Refund Management</span>
                         </a>
@@ -174,71 +174,86 @@
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200">
-                                @forelse($courses as $course)
+                                @forelse($courses as $registration)
                                 <tr class="hover:bg-gray-50">
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="flex items-center">
                                             <div class="flex-shrink-0 h-10 w-10 bg-blue-500 rounded-full flex items-center justify-center">
-                                                <span class="text-white font-bold text-sm">{{ substr($course->user->name, 0, 1) }}</span>
+                                                <span class="text-white font-bold text-sm">{{ substr($registration->user->name, 0, 1) }}</span>
                                             </div>
                                             <div class="ml-4">
-                                                <div class="text-sm font-medium text-gray-900">{{ $course->user->name }}</div>
-                                                <div class="text-sm text-gray-500">{{ $course->user->email }}</div>
+                                                <div class="text-sm font-medium text-gray-900">{{ $registration->user->name }}</div>
+                                                <div class="text-sm text-gray-500">{{ $registration->user->email }}</div>
                                             </div>
                                         </div>
                                     </td>
                                     <td class="px-6 py-4">
                                         <div class="text-sm text-gray-900">
-                                            <strong>{{ $course->course }}</strong><br>
-                                            <span class="text-gray-600">{{ $course->sub_course1 }} - {{ $course->sub_course2 }}</span><br>
-                                            <small class="text-gray-500">{{ $course->kelas }}</small>
+                                            <strong>{{ $registration->course->title }}</strong><br>
+                                            <span class="text-gray-600">{{ $registration->course->type }}</span><br>
+                                            <small class="text-gray-500">Instruktur: {{ $registration->course->instructor->name ?? 'Tidak tersedia' }}</small>
                                         </div>
                                     </td>
                                     <td class="px-6 py-4">
                                         <div class="text-sm text-gray-900">
-                                            <strong>Name:</strong> {{ $course->nama_lengkap }}<br>
-                                            <strong>TTL:</strong> {{ $course->ttl }}<br>
-                                            <strong>Location:</strong> {{ $course->tempat_tinggal }}<br>
-                                            <strong>Gender:</strong> {{ $course->gender }}
+                                            <strong>Name:</strong> {{ $registration->nama_lengkap }}<br>
+                                            <strong>TTL:</strong> {{ $registration->ttl }}<br>
+                                            <strong>Location:</strong> {{ $registration->tempat_tinggal }}<br>
+                                            <strong>Gender:</strong> {{ $registration->gender }}
                                         </div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm font-medium text-gray-900">Rp{{ number_format($course->price, 0, ',', '.') }}</div>
+                                        <div class="text-sm font-medium text-gray-900">
+                                            @if($registration->discount_code)
+                                            <div class="flex items-center gap-2">
+                                                <span class="text-green-600">{{ $registration->formatted_final_price }}</span>
+                                                <span class="text-xs text-gray-500 line-through">{{ $registration->formatted_price }}</span>
+                                            </div>
+                                            <div class="text-xs text-green-600">Diskon: {{ $registration->discount_code }}</div>
+                                            @else
+                                            <span>{{ $registration->formatted_price }}</span>
+                                            @endif
+                                        </div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <span class="status-badge status-{{ $course->status }}">
-                                            {{ ucfirst($course->status) }}
+                                        <span class="status-badge status-{{ $registration->status }}">
+                                            {{ ucfirst($registration->status) }}
                                         </span>
+                                        @if($registration->status === 'paid' && $registration->progress > 0)
+                                        <div class="text-xs text-gray-500 mt-1">Progress: {{ $registration->progress }}%</div>
+                                        @endif
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                        {{ $course->created_at->format('M d, Y') }}<br>
-                                        <small>{{ $course->created_at->format('H:i') }}</small>
+                                        {{ $registration->created_at->format('M d, Y') }}<br>
+                                        <small>{{ $registration->created_at->format('H:i') }}</small>
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                        <div class="flex gap-2">
-                                            <form action="{{ route('admin.courses.status', $course->id) }}" method="POST" class="inline">
-                                                @csrf
-                                                @method('PUT')
-                                                <select name="status" onchange="this.form.submit()" 
-                                                        class="text-xs border rounded p-1 
-                                                               @if($course->status == 'paid') bg-green-100 
-                                                               @elseif($course->status == 'pending') bg-yellow-100 
-                                                               @else bg-red-100 @endif">
-                                                    <option value="pending" {{ $course->status == 'pending' ? 'selected' : '' }}>Pending</option>
-                                                    <option value="paid" {{ $course->status == 'paid' ? 'selected' : '' }}>Paid</option>
-                                                    <option value="cancelled" {{ $course->status == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
-                                                </select>
-                                            </form>
-                                            <form action="{{ route('course.destroy', $course->id) }}" method="POST" class="inline">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="text-red-600 hover:text-red-900" 
-                                                        onclick="return confirm('Delete this course registration?')">
-                                                    <i class="fas fa-trash"></i>
-                                                </button>
-                                            </form>
-                                        </div>
-                                    </td>
+                                    <!-- Di dalam loop foreach $courses as $registration -->
+<td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+    <div class="flex gap-2">
+        <!-- GUNAKAN ROUTE YANG BENAR: admin.courses.status.update -->
+        <form action="{{ route('admin.courses.status.update', $registration->id) }}" method="POST" class="inline">
+            @csrf
+            @method('PUT')
+            <select name="status" onchange="this.form.submit()" 
+                    class="text-xs border rounded p-1 
+                           @if($registration->status == 'paid') bg-green-100 
+                           @elseif($registration->status == 'pending') bg-yellow-100 
+                           @else bg-red-100 @endif">
+                <option value="pending" {{ $registration->status == 'pending' ? 'selected' : '' }}>Pending</option>
+                <option value="paid" {{ $registration->status == 'paid' ? 'selected' : '' }}>Paid</option>
+                <option value="cancelled" {{ $registration->status == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
+            </select>
+        </form>
+        <form action="{{ route('course.destroy', $registration->id) }}" method="POST" class="inline">
+            @csrf
+            @method('DELETE')
+            <button type="submit" class="text-red-600 hover:text-red-900" 
+                    onclick="return confirm('Delete this course registration?')">
+                <i class="fas fa-trash"></i>
+            </button>
+        </form>
+    </div>
+</td>
                                 </tr>
                                 @empty
                                 <tr>

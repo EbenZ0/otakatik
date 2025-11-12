@@ -26,18 +26,22 @@
         }
         .role-admin { background: #fef3c7; color: #d97706; }
         .role-user { background: #d1fae5; color: #065f46; }
+        .role-instructor { background: #dbeafe; color: #1e40af; }
         
         .stats-card {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
         .admin-card {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            background: linear-gradient(135deg, #cc83d4ff 0%, #f5576c 100%);
         }
-        .user-card {
+        .instructor-card {
             background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
         }
-        .active-card {
+        .user-card {
             background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        }
+        .active-card {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
         }
     </style>
 </head>
@@ -128,7 +132,7 @@
             <!-- Main Content Area -->
             <main class="flex-1 overflow-y-auto p-6">
                 <!-- User Stats Cards -->
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
                     <div class="stats-card rounded-2xl p-6 text-white shadow-lg">
                         <div class="flex items-center justify-between">
                             <div>
@@ -149,12 +153,22 @@
                             <i class="fas fa-user-shield text-3xl opacity-80"></i>
                         </div>
                     </div>
+                    <div class="instructor-card rounded-2xl p-6 text-white shadow-lg">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm opacity-90">Instructors</p>
+                                <p class="text-3xl font-bold mt-2">{{ $userStats['instructor_users'] }}</p>
+                                <p class="text-xs opacity-80 mt-2">Teachers</p>
+                            </div>
+                            <i class="fas fa-chalkboard-teacher text-3xl opacity-80"></i>
+                        </div>
+                    </div>
                     <div class="user-card rounded-2xl p-6 text-white shadow-lg">
                         <div class="flex items-center justify-between">
                             <div>
                                 <p class="text-sm opacity-90">Regular Users</p>
                                 <p class="text-3xl font-bold mt-2">{{ $userStats['regular_users'] }}</p>
-                                <p class="text-xs opacity-80 mt-2">Standard users</p>
+                                <p class="text-xs opacity-80 mt-2">Students</p>
                             </div>
                             <i class="fas fa-user text-3xl opacity-80"></i>
                         </div>
@@ -281,14 +295,26 @@
                                     </td>
                                     <td class="px-6 py-4">
                                         <div class="space-y-2">
-                                            <span class="role-badge role-{{ $user->is_admin ? 'admin' : 'user' }}">
-                                                {{ $user->statusText }}
+                                            <span class="role-badge 
+                                                @if($user->is_admin) role-admin 
+                                                @elseif($user->is_instructor) role-instructor 
+                                                @else role-user @endif">
+                                                @if($user->is_admin) Admin
+                                                @elseif($user->is_instructor) Instructor
+                                                @else User
+                                                @endif
                                             </span>
                                             <div class="text-sm text-gray-600">
                                                 <div class="flex items-center gap-1">
                                                     <i class="fas fa-book text-purple-500 text-xs"></i>
                                                     <span>{{ $user->courseCount }} courses</span>
                                                 </div>
+                                                @if($user->is_instructor && $user->taughtCourses)
+                                                <div class="flex items-center gap-1 mt-1">
+                                                    <i class="fas fa-chalkboard-teacher text-blue-500 text-xs"></i>
+                                                    <span>{{ $user->taughtCourses->count() }} courses taught</span>
+                                                </div>
+                                                @endif
                                             </div>
                                         </div>
                                     </td>
@@ -298,10 +324,14 @@
                                             <form action="{{ route('admin.users.role', $user->id) }}" method="POST" class="inline">
                                                 @csrf
                                                 @method('PUT')
-                                                <select name="is_admin" onchange="this.form.submit()" 
-                                                        class="text-xs border rounded p-1 {{ $user->is_admin ? 'bg-yellow-100' : 'bg-green-100' }}">
-                                                    <option value="0" {{ !$user->is_admin ? 'selected' : '' }}>User</option>
-                                                    <option value="1" {{ $user->is_admin ? 'selected' : '' }}>Admin</option>
+                                                <select name="role" onchange="this.form.submit()" 
+                                                        class="text-xs border rounded p-1 
+                                                               @if($user->is_admin) bg-yellow-100 
+                                                               @elseif($user->is_instructor) bg-blue-100 
+                                                               @else bg-green-100 @endif">
+                                                    <option value="user" {{ !$user->is_admin && !$user->is_instructor ? 'selected' : '' }}>User</option>
+                                                    <option value="admin" {{ $user->is_admin ? 'selected' : '' }}>Admin</option>
+                                                    <option value="instructor" {{ $user->is_instructor ? 'selected' : '' }}>Instructor</option>
                                                 </select>
                                             </form>
                                             <button onclick="editUser({{ $user->id }})" class="text-blue-600 hover:text-blue-900">

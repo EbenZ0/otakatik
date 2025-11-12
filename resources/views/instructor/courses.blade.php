@@ -173,11 +173,11 @@
                             
                             <!-- Action Buttons -->
                             <div class="flex gap-2">
-                                <a href="{{ route('instructor.course.show', $course->id) }}" 
+                                <a href="{{ route('instructor.courses.show', $course->id) }}" 
                                    class="flex-1 bg-blue-500 hover:bg-blue-600 text-white text-center py-2 px-4 rounded-lg transition-all text-sm font-medium">
                                     <i class="fas fa-cog mr-1"></i> Kelola
                                 </a>
-                                <a href="{{ route('instructor.course.students', $course->id) }}" 
+                                <a href="{{ route('instructor.courses.students', $course->id) }}" 
                                    class="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-lg transition-all text-sm">
                                     <i class="fas fa-users"></i>
                                 </a>

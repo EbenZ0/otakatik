@@ -3,32 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Our Course - OtakAtik Academy</title>
+    <title>Our Courses - OtakAtik Academy</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        .course-card {
+            transition: all 0.3s ease;
         }
-        .animate-fade-in {
-            animation: fadeIn 0.6s ease-out;
+        .course-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
         }
-        .shadow-custom {
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        }
-        .course-type-badge {
-            position: absolute;
-            top: 12px;
-            right: 12px;
+        .type-badge {
             padding: 4px 12px;
             border-radius: 20px;
             font-size: 12px;
             font-weight: 600;
         }
-        .type-online { background: #3b82f6; color: white; }
-        .type-hybrid { background: #f59e0b; color: white; }
-        .type-offline { background: #10b981; color: white; }
+        .type-full-online { background: #dbeafe; color: #1e40af; }
+        .type-hybrid { background: #fef3c7; color: #d97706; }
+        .type-tatap-muka { background: #d1fae5; color: #065f46; }
     </style>
 </head>
 <body class="bg-gray-50">
@@ -48,196 +42,212 @@
             <div class="hidden md:flex items-center gap-8">
                 <a href="/dashboard" class="text-gray-700 hover:text-orange-500 font-medium transition">About Us</a>
                 <a href="/course" class="text-orange-500 font-medium transition">Our Course</a>
-                @auth
                 <a href="/my-courses" class="text-gray-700 hover:text-orange-500 font-medium transition">My Courses</a>
                 <a href="/purchase-history" class="text-gray-700 hover:text-orange-500 font-medium transition">History</a>
-                @endauth
             </div>
             
-            <!-- Sign In / Logout Button -->
-            @auth
-                <div class="flex items-center gap-4">
-                    <span class="text-gray-700 font-medium">Hi, {{ Auth::user()->name }}!</span>
-                    <a href="/my-courses" class="bg-blue-500 hover:bg-blue-600 text-white font-bold px-4 py-2 rounded-lg transition-all">
-                        <i class="fas fa-book mr-2"></i>My Courses
-                    </a>
-                    <form action="/logout" method="POST">
-                        @csrf
-                        <button type="submit" class="bg-red-500 hover:bg-red-600 text-white font-bold px-4 py-2 rounded-lg transition-all">
-                            Logout
-                        </button>
-                    </form>
-                </div>
-            @else
-                <div class="flex items-center gap-4">
-                    <a href="/login" class="text-gray-700 hover:text-orange-500 font-medium transition">Login</a>
-                    <a href="/register" class="bg-orange-500 hover:bg-orange-600 text-white font-bold px-6 py-2.5 rounded-lg transition-all">
-                        Sign Up
-                    </a>
-                </div>
-            @endauth
+            <!-- User Info -->
+            <div class="flex items-center gap-4">
+                <span class="text-gray-700 font-medium">Hi, {{ Auth::user()->name }}!</span>
+                <form action="/logout" method="POST">
+                    @csrf
+                    <button type="submit" class="bg-red-500 hover:bg-red-600 text-white font-bold px-4 py-2 rounded-lg transition-all">
+                        Logout
+                    </button>
+                </form>
+            </div>
         </div>
     </nav>
 
     <!-- Courses Section -->
-    <section class="pt-32 pb-10 px-6">
+    <section class="pt-32 pb-20 px-6">
         <div class="max-w-7xl mx-auto">
             <div class="text-center mb-12">
                 <h1 class="text-4xl font-bold text-gray-800 mb-4">Our Courses</h1>
-                <p class="text-gray-600 text-lg">Choose the perfect course for your learning journey</p>
+                <p class="text-gray-600 text-lg">Pilih course yang sesuai dengan kebutuhan belajar Anda</p>
             </div>
 
-            <!-- Courses Grid -->
-            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-                @foreach($courses as $course)
-                <div class="bg-white rounded-2xl shadow-custom overflow-hidden hover:transform hover:scale-105 transition-all duration-300 animate-fade-in relative">
-                    <span class="course-type-badge type-{{ $course->type }}">
-                        {{ ucfirst($course->type) }}
-                    </span>
-                    
-                    <!-- Course Image -->
-                    <div class="h-48 bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
-                        <i class="fas fa-book-open text-white text-6xl"></i>
-                    </div>
-                    
-                    <!-- Course Content -->
-                    <div class="p-6">
-                        <h3 class="text-xl font-bold text-gray-800 mb-2">{{ $course->title }}</h3>
-                        
-                        @if($course->instructor)
-                        <p class="text-gray-600 text-sm mb-3">
-                            <i class="fas fa-user-tie mr-2"></i>By {{ $course->instructor->name }}
-                        </p>
-                        @endif
-                        
-                        <p class="text-gray-700 mb-4 text-sm line-clamp-2">
-                            {{ $course->description ?? 'No description available.' }}
-                        </p>
-                        
-                        <!-- Course Info -->
-                        <div class="space-y-2 mb-4">
-                            <div class="flex justify-between text-sm">
-                                <span class="text-gray-600">Kuota:</span>
-                                <span class="font-medium">{{ $course->current_enrollment }}/{{ $course->max_quota }}</span>
-                            </div>
-                            <div class="flex justify-between text-sm">
-                                <span class="text-gray-600">Tipe:</span>
-                                <span class="font-medium capitalize">{{ $course->type }}</span>
+            @if($courses->count() > 0)
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    @foreach($courses as $course)
+                    <div class="course-card bg-white rounded-2xl shadow-lg overflow-hidden">
+                        <!-- Course Header -->
+                        <div class="h-32 bg-gradient-to-r from-blue-500 to-purple-600 relative">
+                            <div class="absolute inset-0 bg-black bg-opacity-20 flex items-center justify-center">
+                                <h3 class="text-xl font-bold text-white text-center px-4">{{ $course->title }}</h3>
                             </div>
                         </div>
                         
-                        <!-- Pricing -->
-                        <div class="flex items-center justify-between mb-4">
-                            @if($course->discount_percent > 0)
-                            <div class="flex items-center gap-2">
-                                <span class="text-lg font-bold text-gray-800">{{ $course->formatted_final_price }}</span>
-                                <span class="text-sm text-gray-500 line-through">{{ $course->formatted_price }}</span>
-                                <span class="text-xs bg-green-500 text-white px-2 py-1 rounded-full">
-                                    -{{ $course->discount_percent }}%
+                        <!-- Course Content -->
+                        <div class="p-6">
+                            <!-- Course Type & Status -->
+                            <div class="flex items-center justify-between mb-4">
+                                <span class="type-badge type-{{ strtolower(str_replace(' ', '-', $course->type)) }}">
+                                    {{ $course->type }}
                                 </span>
+                                @if($course->is_active)
+                                <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-medium">
+                                    Available
+                                </span>
+                                @else
+                                <span class="bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-xs font-medium">
+                                    Coming Soon
+                                </span>
+                                @endif
                             </div>
-                            @else
-                            <span class="text-lg font-bold text-gray-800">{{ $course->formatted_price }}</span>
-                            @endif
+                            
+                            <!-- Course Description -->
+                            <p class="text-gray-600 text-sm mb-4 line-clamp-2">
+                                {{ Str::limit($course->description, 120) }}
+                            </p>
+                            
+                            <!-- Course Details -->
+                            <div class="space-y-2 text-sm text-gray-600 mb-4">
+                                @if($course->instructor)
+                                <div class="flex items-center gap-2">
+                                    <i class="fas fa-user-tie text-blue-500"></i>
+                                    <span>Instruktur: {{ $course->instructor->name }}</span>
+                                </div>
+                                @endif
+                                <div class="flex items-center gap-2">
+                                    <i class="fas fa-users text-green-500"></i>
+                                    <span>{{ $course->current_enrollment }}/{{ $course->max_quota }} peserta</span>
+                                </div>
+                                @if($course->has_available_slots)
+                                <div class="flex items-center gap-2 text-green-600">
+                                    <i class="fas fa-check-circle"></i>
+                                    <span class="font-medium">Masih tersedia</span>
+                                </div>
+                                @else
+                                <div class="flex items-center gap-2 text-red-600">
+                                    <i class="fas fa-times-circle"></i>
+                                    <span class="font-medium">Kuota penuh</span>
+                                </div>
+                                @endif
+                            </div>
+                            
+                            <!-- Pricing -->
+                            <div class="mb-4">
+                                @if($course->discount_percent > 0)
+                                <div class="flex items-center gap-2">
+                                    <span class="text-2xl font-bold text-green-600">
+                                        {{ $course->formatted_final_price }}
+                                    </span>
+                                    <span class="text-lg text-gray-500 line-through">
+                                        {{ $course->formatted_price }}
+                                    </span>
+                                    <span class="bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs font-medium">
+                                        -{{ $course->discount_percent }}%
+                                    </span>
+                                </div>
+                                @else
+                                <span class="text-2xl font-bold text-gray-800">
+                                    {{ $course->formatted_price }}
+                                </span>
+                                @endif
+                            </div>
+                            
+                            <!-- Action Button -->
+                            <div class="flex gap-2">
+                                <a href="{{ route('course.show.detail', $course->id) }}" 
+                                   class="flex-1 bg-blue-500 hover:bg-blue-600 text-white text-center py-3 px-4 rounded-lg transition-all font-medium">
+                                    <i class="fas fa-eye mr-2"></i> Lihat Detail
+                                </a>
+                                @if($course->is_active && $course->has_available_slots)
+                                <button onclick="showRegistrationForm({{ $course->id }})" 
+                                        class="bg-orange-500 hover:bg-orange-600 text-white py-3 px-4 rounded-lg transition-all font-medium">
+                                    <i class="fas fa-shopping-cart mr-2"></i> Daftar
+                                </button>
+                                @else
+                                <button disabled 
+                                        class="bg-gray-400 text-white py-3 px-4 rounded-lg font-medium cursor-not-allowed">
+                                    <i class="fas fa-clock mr-2"></i> Tidak Tersedia
+                                </button>
+                                @endif
+                            </div>
                         </div>
-                        
-                        <!-- Action Button -->
-                        @auth
-                        <button onclick="selectCourse({{ $course->id }}, '{{ $course->title }}', {{ $course->final_price }})" 
-                                class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg transition-all">
-                            Daftar Sekarang
-                        </button>
-                        @else
-                        <a href="/login" 
-                           class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg transition-all block text-center">
-                            Login untuk Daftar
-                        </a>
-                        @endauth
+                    </div>
+                    @endforeach
+                </div>
+            @else
+                <!-- Empty State -->
+                <div class="text-center py-16 bg-white rounded-2xl shadow-lg">
+                    <div class="max-w-md mx-auto">
+                        <div class="w-32 h-32 bg-gradient-to-br from-gray-400 to-gray-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <i class="fas fa-book-open text-white text-4xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-gray-800 mb-4">Belum Ada Course Tersedia</h3>
+                        <p class="text-gray-600 mb-8">Saat ini belum ada course yang aktif. Silakan cek kembali nanti.</p>
+                        <div class="w-12 h-1 bg-gray-200 rounded-full mx-auto"></div>
                     </div>
                 </div>
-                @endforeach
-            </div>
-
-            @if(count($courses) === 0)
-            <div class="text-center py-12">
-                <i class="fas fa-book-open text-6xl text-gray-300 mb-4"></i>
-                <h3 class="text-xl font-semibold text-gray-600 mb-2">Belum ada course tersedia</h3>
-                <p class="text-gray-500">Silakan check kembali nanti.</p>
-            </div>
             @endif
         </div>
     </section>
 
-    <!-- Registration Form Section -->
-    <section class="pb-20 px-6" id="registrationSection" style="display: none;">
-        <div class="max-w-4xl mx-auto">
-            <div class="bg-white rounded-2xl shadow-custom animate-fade-in">
-                <!-- Form Header -->
-                <div class="border-b border-gray-200 px-8 py-6 flex items-center justify-between">
-                    <h2 id="formTitle" class="text-2xl font-bold text-gray-800">Pendaftaran Course</h2>
-                    <div class="flex items-center gap-2">
-                        <div class="w-7 h-7 bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg flex items-center justify-center">
-                            <span class="text-white font-bold text-sm">O</span>
-                        </div>
-                        <span class="text-lg font-bold text-gray-800">OtakAtik</span>
+    <!-- Registration Modal -->
+    <div id="registrationModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-2xl p-6 max-w-md w-full mx-4">
+            <h3 class="text-xl font-bold text-gray-800 mb-4">Form Pendaftaran Course</h3>
+            
+            <!-- GUNAKAN URL LANGSUNG - SOLUSI NOMOR 4 -->
+            <form id="registrationForm" action="/course/register" method="POST">
+                @csrf
+                <input type="hidden" name="course_id" id="course_id">
+                
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Nama Lengkap</label>
+                        <input type="text" name="nama_lengkap" required 
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                               value="{{ Auth::user()->name }}">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Tempat, Tanggal Lahir</label>
+                        <input type="text" name="ttl" required 
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                               placeholder="Contoh: Jakarta, 15 Agustus 1990">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Tempat Tinggal</label>
+                        <input type="text" name="tempat_tinggal" required 
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                               placeholder="Kota tempat tinggal saat ini">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Jenis Kelamin</label>
+                        <select name="gender" required 
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <option value="">Pilih Jenis Kelamin</option>
+                            <option value="Laki-laki">Laki-laki</option>
+                            <option value="Perempuan">Perempuan</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Kode Diskon (Opsional)</label>
+                        <input type="text" name="discount_code" 
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                               placeholder="Masukkan kode diskon jika ada">
                     </div>
                 </div>
-
-                <!-- Form Body -->
-                <div class="p-8">
-                    <form id="registrationForm" action="/course/register" method="POST">
-                        @csrf
-                        <input type="hidden" name="course_id" id="courseInput">
-                        
-                        <div class="grid md:grid-cols-2 gap-6 mb-8">
-                            <div>
-                                <label class="text-sm text-gray-600 font-medium mb-2 block">Nama Lengkap</label>
-                                <input type="text" name="nama_lengkap" placeholder="Nama Lengkap" required 
-                                       class="w-full px-4 py-3 bg-gray-100 rounded-lg focus:outline-none focus:bg-gray-200 transition">
-                            </div>
-                            <div>
-                                <label class="text-sm text-gray-600 font-medium mb-2 block">Tempat Tanggal Lahir</label>
-                                <input type="text" name="ttl" placeholder="Contoh: Jakarta, 01 Januari 2000" required 
-                                       class="w-full px-4 py-3 bg-gray-100 rounded-lg focus:outline-none focus:bg-gray-200 transition">
-                            </div>
-                            <div>
-                                <label class="text-sm text-gray-600 font-medium mb-2 block">Tempat Tinggal</label>
-                                <input type="text" name="tempat_tinggal" placeholder="Nama Kota" required 
-                                       class="w-full px-4 py-3 bg-gray-100 rounded-lg focus:outline-none focus:bg-gray-200 transition">
-                            </div>
-                            <div>
-                                <label class="text-sm text-gray-600 font-medium mb-2 block">Gender</label>
-                                <select name="gender" required class="w-full px-4 py-3 bg-gray-100 rounded-lg focus:outline-none focus:bg-gray-200 transition">
-                                    <option value="">Pilih Gender</option>
-                                    <option value="Laki-laki">Laki-laki</option>
-                                    <option value="Perempuan">Perempuan</option>
-                                </select>
-                            </div>
-                            <div class="md:col-span-2">
-                                <label class="text-sm text-gray-600 font-medium mb-2 block">Kode Diskon (Opsional)</label>
-                                <input type="text" name="discount_code" placeholder="Contoh: PROMOPNJ" 
-                                       class="w-full px-4 py-3 bg-gray-100 rounded-lg focus:outline-none focus:bg-gray-200 transition">
-                                <p class="text-xs text-gray-500 mt-1">Gunakan kode <strong>PROMOPNJ</strong> untuk mendapatkan diskon 10%</p>
-                            </div>
-                        </div>
-
-                        <!-- Footer with Price and Submit -->
-                        <div class="border-t-2 border-gray-100 pt-6 flex items-center justify-between">
-                            <div class="flex items-center gap-8">
-                                <div class="text-right">
-                                    <div class="text-2xl font-bold text-gray-800" id="displayPrice">Rp0</div>
-                                    <div class="text-sm text-gray-600">Total Pembayaran</div>
-                                </div>
-                            </div>
-                            <button type="submit" class="bg-orange-500 hover:bg-orange-600 text-white font-bold px-8 py-3 rounded-lg transition-all hover:scale-105 shadow-lg">
-                                Daftar Sekarang
-                            </button>
-                        </div>
-                    </form>
+                
+                <div class="flex gap-3 mt-6">
+                    <button type="submit" 
+                            class="flex-1 bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-4 rounded-lg transition-all">
+                        <i class="fas fa-paper-plane mr-2"></i> Daftar Sekarang
+                    </button>
+                    <button type="button" onclick="hideRegistrationForm()" 
+                            class="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-all">
+                        Batal
+                    </button>
                 </div>
-            </div>
+            </form>
         </div>
-    </section>
+    </div>
 
     <!-- Footer -->
     <footer class="bg-gray-800 text-white py-12 px-6">
@@ -254,50 +264,28 @@
     </footer>
 
     <script>
-        // Function to select course
-        function selectCourse(courseId, courseTitle, finalPrice) {
-            // Update form title
-            document.getElementById('formTitle').textContent = 'Pendaftaran: ' + courseTitle;
-            
-            // Update hidden inputs
-            document.getElementById('courseInput').value = courseId;
-            
-            // Update display price
-            document.getElementById('displayPrice').textContent = 'Rp' + finalPrice.toLocaleString('id-ID');
-            
-            // Show form section
-            document.getElementById('registrationSection').style.display = 'block';
-            
-            // Smooth scroll to form
-            document.getElementById('registrationSection').scrollIntoView({ 
-                behavior: 'smooth', 
-                block: 'center' 
-            });
+        function showRegistrationForm(courseId) {
+            console.log('Showing registration form for course:', courseId);
+            document.getElementById('course_id').value = courseId;
+            document.getElementById('registrationModal').classList.remove('hidden');
         }
-
-        // Form submission handler
-        document.getElementById('registrationForm').addEventListener('submit', function(e) {
-            const courseId = document.getElementById('courseInput').value;
-            if (!courseId) {
-                e.preventDefault();
-                alert('Silakan pilih course terlebih dahulu!');
-                return;
+        
+        function hideRegistrationForm() {
+            console.log('Hiding registration form');
+            document.getElementById('registrationModal').classList.add('hidden');
+            document.getElementById('course_id').value = '';
+        }
+        
+        // Close modal when clicking outside
+        document.getElementById('registrationModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                hideRegistrationForm();
             }
-            
-            // Show loading
-            const button = this.querySelector('button[type="submit"]');
-            button.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Memproses...';
-            button.disabled = true;
         });
 
-        // Success message handler
-        @if(session('success'))
-            alert('{{ session('success') }}');
-        @endif
-
-        @if($errors->any())
-            alert('Terjadi kesalahan: {{ $errors->first() }}');
-        @endif
+        // HAPUS SEMUA EVENT LISTENER FORM YANG LAIN
+        // Biarkan form submit secara normal tanpa JavaScript interference
+        // TIDAK ADA EVENT LISTENER UNTUK FORM SUBMISSION
     </script>
 
 </body>

@@ -72,36 +72,6 @@
                     <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300">
                         <!-- Course Header -->
                         <div class="h-32 bg-gradient-to-r from-blue-500 to-purple-600 relative">
-                            <div class="absolute top-4 right-4">
-                                <div class="relative w-20 h-20">
-                                    <svg class="w-20 h-20 progress-ring" width="80" height="80">
-                                        <circle
-                                            class="text-gray-200"
-                                            stroke-width="6"
-                                            stroke="currentColor"
-                                            fill="transparent"
-                                            r="36"
-                                            cx="40"
-                                            cy="40"
-                                        />
-                                        <circle
-                                            class="progress-ring__circle text-green-500"
-                                            stroke-width="6"
-                                            stroke-linecap="round"
-                                            stroke="currentColor"
-                                            fill="transparent"
-                                            r="36"
-                                            cx="40"
-                                            cy="40"
-                                            stroke-dasharray="{{ $strokeDasharray }}"
-                                            stroke-dashoffset="{{ $strokeDashoffset }}"
-                                        />
-                                    </svg>
-                                    <div class="absolute inset-0 flex items-center justify-center">
-                                        <span class="text-white font-bold text-sm">{{ $progress }}%</span>
-                                    </div>
-                                </div>
-                            </div>
                             <div class="absolute bottom-4 left-4 text-white">
                                 <h3 class="text-xl font-bold">{{ $course->title }}</h3>
                                 <p class="text-sm opacity-90">{{ $course->type }}</p>
@@ -129,7 +99,13 @@
                                 </div>
                                 <div class="flex items-center gap-2">
                                     <i class="fas fa-calendar w-4"></i>
-                                    <span>Bergabung: {{ $registration->enrolled_at->format('d M Y') }}</span>
+                                    <span>Bergabung: 
+                                        @if($registration->enrolled_at)
+                                            {{ $registration->enrolled_at->format('d M Y') }}
+                                        @else
+                                            {{ $registration->created_at->format('d M Y') }}
+                                        @endif
+                                    </span>
                                 </div>
                                 @if($registration->completed_at)
                                 <div class="flex items-center gap-2 text-green-600">
@@ -141,7 +117,7 @@
                             
                             <!-- Action Buttons -->
                             <div class="flex gap-2">
-                                <a href="{{ route('course.show', $course->id) }}" 
+                                <a href="{{ route('course.show.detail', $course->id) }}" 
                                    class="flex-1 bg-blue-500 hover:bg-blue-600 text-white text-center py-2 px-4 rounded-lg transition-all text-sm font-medium">
                                     <i class="fas fa-play mr-1"></i> Lanjutkan
                                 </a>
@@ -171,6 +147,17 @@
 
             <!-- Overall Progress Card -->
             @if($enrolledCourses->count() > 0)
+            @php
+                // Calculate overall progress directly in view
+                $totalProgress = 0;
+                $courseCount = $enrolledCourses->count();
+                
+                foreach($enrolledCourses as $registration) {
+                    $totalProgress += $registration->progress;
+                }
+                $calculatedOverallProgress = $courseCount > 0 ? $totalProgress / $courseCount : 0;
+            @endphp
+
             <div class="mt-12 bg-gradient-to-r from-blue-600 to-purple-700 rounded-2xl shadow-lg p-8 text-white">
                 <h3 class="text-2xl font-bold mb-6 text-center">Progress Belajar Keseluruhan</h3>
                 
@@ -184,7 +171,7 @@
                         <p class="text-blue-100">Course Selesai</p>
                     </div>
                     <div class="text-center">
-                        <div class="text-4xl font-bold mb-2">{{ number_format($overallProgress, 1) }}%</div>
+                        <div class="text-4xl font-bold mb-2">{{ number_format($calculatedOverallProgress, 1) }}%</div>
                         <p class="text-blue-100">Rata-rata Progress</p>
                     </div>
                 </div>

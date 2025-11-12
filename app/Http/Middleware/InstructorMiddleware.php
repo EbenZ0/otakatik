@@ -11,8 +11,6 @@ class InstructorMiddleware
 {
     /**
      * Handle an incoming request.
-     *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
     public function handle(Request $request, Closure $next): Response
     {
@@ -20,7 +18,7 @@ class InstructorMiddleware
             return redirect('/login');
         }
 
-        if (!Auth::user()->is_instructor && !Auth::user()->is_admin) {
+        if (!Auth::user()->is_instructor) {
             abort(403, 'Unauthorized access. Instructor privileges required.');
         }
 

@@ -124,7 +124,7 @@ return [
             'charset' => 'AL32UTF8',
             'prefix' => '',
             'prefix_schema' => env('DB_SCHEMA_PREFIX', ''),
-            'edition' => env('DB_EDITION', ''),
+            'edition' => env('DB_EDITION'),
             'server_version' => env('DB_SERVER_VERSION', '11g'),
             'load_balance' => env('DB_LOAD_BALANCE', 'yes'),
             'dynamic' => [],

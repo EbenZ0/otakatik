@@ -12,16 +12,20 @@ use Illuminate\Support\Facades\Response;
 class CourseController extends Controller
 {
     /**
-     * Show course registration page
+     * Show course registration page - HANYA COURSE AKTIF
      */
     public function showCourse()
     {
-        $courses = Course::active()->with('instructor')->get();
+        // HANYA tampilkan course yang is_active = true
+        $courses = Course::where('is_active', true)
+                    ->with('instructor')
+                    ->get();
+        
         return view('course', compact('courses'));
     }
 
     /**
-     * Show course dashboard
+     * Show course dashboard - HANYA COURSE AKTIF
      */
     public function dashboard()
     {
@@ -50,7 +54,12 @@ class CourseController extends Controller
     public function myCourses()
     {
         $user = Auth::user();
-        $enrolledCourses = $user->enrolledCourses;
+        
+        // Hanya ambil course dengan status 'paid' (yang sudah disetujui)
+        $enrolledCourses = $user->courseRegistrations()
+            ->where('status', 'paid')
+            ->with('course.instructor')
+            ->get();
         
         return view('my-courses', compact('enrolledCourses'));
     }
@@ -70,7 +79,7 @@ class CourseController extends Controller
     }
 
     /**
-     * Handle course registration
+     * Handle course registration dengan coupon instructor 100%
      */
     public function register(Request $request)
     {
@@ -94,12 +103,35 @@ class CourseController extends Controller
         $price = $course->price;
         $finalPrice = $course->price;
         $discountCode = null;
+        $discountPercent = 0;
 
         if (!empty($validated['discount_code'])) {
-            if ($validated['discount_code'] === 'PROMOPNJ') {
-                $finalPrice = $price * 0.9; // 10% discount
-                $discountCode = 'PROMOPNJ';
+            // Check for instructor coupon (100% discount) - HANYA untuk instructor
+            if ($validated['discount_code'] === 'INSTRUCTOR100' && Auth::user()->is_instructor) {
+                $finalPrice = 0; // 100% discount
+                $discountPercent = 100;
+                $discountCode = 'INSTRUCTOR100';
+                $status = 'paid'; // Auto-approve untuk instructor
             }
+            // Check for regular promo code (10% discount) - untuk semua user
+            elseif ($validated['discount_code'] === 'PROMOPNJ') {
+                $finalPrice = $price * 0.9; // 10% discount
+                $discountPercent = 10;
+                $discountCode = 'PROMOPNJ';
+                $status = 'pending';
+            }
+            // Jika kode tidak valid, abaikan
+            else {
+                $discountCode = null;
+                $status = 'pending';
+            }
+        } else {
+            $status = 'pending';
+        }
+
+        // Jika bukan instructor tapi mencoba pakai INSTRUCTOR100, tolak
+        if ($validated['discount_code'] === 'INSTRUCTOR100' && !Auth::user()->is_instructor) {
+            return back()->withErrors(['discount_code' => 'Kode INSTRUCTOR100 hanya untuk instruktur.'])->withInput();
         }
 
         // Create registration
@@ -113,34 +145,52 @@ class CourseController extends Controller
             'price' => $price,
             'final_price' => $finalPrice,
             'discount_code' => $discountCode,
-            'status' => 'pending',
+            'status' => $status,
             'progress' => 0,
+            'enrolled_at' => $status === 'paid' ? now() : null,
         ]);
 
-        return redirect()->route('purchase.history')->with('success', 'Pendaftaran course berhasil! Menunggu persetujuan admin.');
+        // Update course enrollment jika auto-approved
+        if ($status === 'paid') {
+            $course->increment('current_enrollment');
+        }
+
+        $successMessage = 'Pendaftaran course berhasil! ';
+        if ($status === 'paid') {
+            $successMessage .= 'Status: APPROVED (Gratis untuk instruktur)';
+        } else {
+            $successMessage .= 'Menunggu persetujuan admin.';
+        }
+
+        return redirect()->route('purchase.history')->with('success', $successMessage);
     }
 
     /**
-     * Show course details
-     */
-    public function show($id)
-    {
-        $course = Course::with(['instructor', 'materials', 'assignments'])->findOrFail($id);
-        
-        // Check if user is enrolled in this course
-        $isEnrolled = false;
-        $userRegistration = null;
-        
-        if (Auth::check()) {
-            $userRegistration = CourseRegistration::where('user_id', Auth::id())
-                ->where('course_id', $id)
-                ->where('status', 'paid')
-                ->first();
-            $isEnrolled = !is_null($userRegistration);
-        }
-
-        return view('course-detail', compact('course', 'isEnrolled', 'userRegistration'));
+ * Show course details - HANYA COURSE AKTIF untuk STUDENT
+ */
+public function show($id)
+{
+    // Jika user adalah INSTRUCTOR, redirect ke dashboard instructor
+    if (Auth::check() && Auth::user()->is_instructor) {
+        return redirect()->route('instructor.courses.show', $id);
     }
+
+    $course = Course::where('is_active', true)->with(['instructor', 'materials', 'assignments'])->findOrFail($id);
+    
+    // Check if user is enrolled in this course
+    $isEnrolled = false;
+    $userRegistration = null;
+    
+    if (Auth::check()) {
+        $userRegistration = CourseRegistration::where('user_id', Auth::id())
+            ->where('course_id', $id)
+            ->where('status', 'paid')
+            ->first();
+        $isEnrolled = !is_null($userRegistration);
+    }
+
+    return view('course-detail', compact('course', 'isEnrolled', 'userRegistration'));
+}
 
     /**
      * Delete course registration

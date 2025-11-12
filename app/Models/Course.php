@@ -9,6 +9,12 @@ class Course extends Model
 {
     use HasFactory;
 
+    protected $attributes = [
+        'discount_percent' => 0,
+        'current_enrollment' => 0,
+        'is_active' => true,
+    ];
+
     protected $fillable = [
         'title',
         'description',
@@ -33,12 +39,38 @@ class Course extends Model
         'is_active' => 'boolean'
     ];
 
+    protected $appends = [
+        'display_type',
+        'formatted_price',
+        'formatted_final_price',
+        'final_price',
+        'requires_instructor',
+        'has_available_slots' // TAMBAH INI
+    ];
+
+    /**
+     * Get display type attribute for user-friendly display
+     */
+    public function getDisplayTypeAttribute()
+    {
+        $mapping = [
+            'online' => 'Full Online',
+            'hybrid' => 'Hybrid',
+            'offline' => 'Tatap Muka'
+        ];
+        
+        return $mapping[$this->type] ?? $this->type;
+    }
+
     /**
      * Get the instructor for the course
      */
     public function instructor()
     {
-        return $this->belongsTo(User::class, 'instructor_id');
+        return $this->belongsTo(User::class, 'instructor_id')->withDefault([
+            'name' => 'Tidak tersedia',
+            'email' => 'N/A'
+        ]);
     }
 
     /**
@@ -50,7 +82,7 @@ class Course extends Model
     }
 
     /**
-     * Get active registrations
+     * Get active registrations (paid)
      */
     public function activeRegistrations()
     {
@@ -58,11 +90,35 @@ class Course extends Model
     }
 
     /**
+     * Get pending registrations
+     */
+    public function pendingRegistrations()
+    {
+        return $this->hasMany(CourseRegistration::class)->where('status', 'pending');
+    }
+
+    /**
+     * Get cancelled registrations
+     */
+    public function cancelledRegistrations()
+    {
+        return $this->hasMany(CourseRegistration::class)->where('status', 'cancelled');
+    }
+
+    /**
      * Get materials for the course
      */
     public function materials()
     {
-        return $this->hasMany(CourseMaterial::class);
+        return $this->hasMany(CourseMaterial::class)->orderBy('order');
+    }
+
+    /**
+     * Get published materials
+     */
+    public function publishedMaterials()
+    {
+        return $this->hasMany(CourseMaterial::class)->where('is_published', true)->orderBy('order');
     }
 
     /**
@@ -70,15 +126,31 @@ class Course extends Model
      */
     public function assignments()
     {
-        return $this->hasMany(CourseAssignment::class);
+        return $this->hasMany(CourseAssignment::class)->orderBy('due_date');
     }
 
     /**
-     * Check if course has available slots
+     * Get published assignments
+     */
+    public function publishedAssignments()
+    {
+        return $this->hasMany(CourseAssignment::class)->where('is_published', true)->orderBy('due_date');
+    }
+
+    /**
+     * Check if course has available slots - METHOD YANG DIPERLUKAN
      */
     public function hasAvailableSlots()
     {
         return $this->current_enrollment < $this->max_quota;
+    }
+
+    /**
+     * Get available slots count
+     */
+    public function getAvailableSlotsAttribute()
+    {
+        return $this->max_quota - $this->current_enrollment;
     }
 
     /**
@@ -90,6 +162,25 @@ class Course extends Model
             return $this->price * (1 - ($this->discount_percent / 100));
         }
         return $this->price;
+    }
+
+    /**
+     * Get discount amount
+     */
+    public function getDiscountAmountAttribute()
+    {
+        if ($this->discount_percent > 0) {
+            return $this->price * ($this->discount_percent / 100);
+        }
+        return 0;
+    }
+
+    /**
+     * Get formatted discount amount
+     */
+    public function getFormattedDiscountAmountAttribute()
+    {
+        return 'Rp' . number_format($this->discount_amount, 0, ',', '.');
     }
 
     /**
@@ -109,11 +200,68 @@ class Course extends Model
     }
 
     /**
-     * Scope active courses
+     * Check if course has discount
+     */
+    public function getHasDiscountAttribute()
+    {
+        return $this->discount_percent > 0;
+    }
+
+    /**
+     * Check if course requires instructor
+     */
+    public function getRequiresInstructorAttribute()
+    {
+        return in_array($this->type, ['hybrid', 'offline']);
+    }
+
+    /**
+     * Get enrollment percentage
+     */
+    public function getEnrollmentPercentageAttribute()
+    {
+        if ($this->max_quota === 0) return 0;
+        return ($this->current_enrollment / $this->max_quota) * 100;
+    }
+
+    /**
+     * Check if course is full
+     */
+    public function getIsFullAttribute()
+    {
+        return $this->current_enrollment >= $this->max_quota;
+    }
+
+    /**
+     * Check if course is popular (more than 50% full)
+     */
+    public function getIsPopularAttribute()
+    {
+        return $this->enrollment_percentage >= 50;
+    }
+
+    /**
+     * Get has_available_slots attribute for view
+     */
+    public function getHasAvailableSlotsAttribute()
+    {
+        return $this->hasAvailableSlots();
+    }
+
+    /**
+     * Scope active courses - HANYA UNTUK USER
      */
     public function scopeActive($query)
     {
         return $query->where('is_active', true);
+    }
+
+    /**
+     * Scope inactive courses
+     */
+    public function scopeInactive($query)
+    {
+        return $query->where('is_active', false);
     }
 
     /**
@@ -122,5 +270,104 @@ class Course extends Model
     public function scopeByType($query, $type)
     {
         return $query->where('type', $type);
+    }
+
+    /**
+     * Scope popular courses (more than 50% enrollment)
+     */
+    public function scopePopular($query)
+    {
+        return $query->whereRaw('current_enrollment >= max_quota * 0.5');
+    }
+
+    /**
+     * Scope courses with available slots
+     */
+    public function scopeWithAvailableSlots($query)
+    {
+        return $query->whereRaw('current_enrollment < max_quota');
+    }
+
+    /**
+     * Scope courses with discount
+     */
+    public function scopeWithDiscount($query)
+    {
+        return $query->where('discount_percent', '>', 0);
+    }
+
+    /**
+     * Scope courses by instructor
+     */
+    public function scopeByInstructor($query, $instructorId)
+    {
+        return $query->where('instructor_id', $instructorId);
+    }
+
+    /**
+     * Scope courses that need instructor
+     */
+    public function scopeRequiresInstructor($query)
+    {
+        return $query->whereIn('type', ['hybrid', 'offline']);
+    }
+
+    /**
+     * Increment enrollment count
+     */
+    public function incrementEnrollment()
+    {
+        $this->increment('current_enrollment');
+    }
+
+    /**
+     * Decrement enrollment count
+     */
+    public function decrementEnrollment()
+    {
+        $this->decrement('current_enrollment');
+    }
+
+    /**
+     * Check if user is enrolled in this course
+     */
+    public function isEnrolledByUser($userId)
+    {
+        return $this->registrations()
+            ->where('user_id', $userId)
+            ->where('status', 'paid')
+            ->exists();
+    }
+
+    /**
+     * Get user registration for this course
+     */
+    public function getUserRegistration($userId)
+    {
+        return $this->registrations()
+            ->where('user_id', $userId)
+            ->first();
+    }
+
+    /**
+     * Boot method for model events
+     */
+    protected static function boot()
+    {
+        parent::boot();
+
+        // Set default instructor_id for online courses
+        static::saving(function ($course) {
+            if ($course->type === 'online') {
+                $course->instructor_id = null;
+            }
+        });
+
+        // Validate max_quota > min_quota
+        static::saving(function ($course) {
+            if ($course->max_quota <= $course->min_quota) {
+                throw new \Exception('Kuota maksimal harus lebih besar dari kuota minimal');
+            }
+        });
     }
 }

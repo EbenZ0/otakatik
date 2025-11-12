@@ -4,10 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+// Hapus sementara SoftDeletes sampai migration selesai
+// use Illuminate\Database\Eloquent\SoftDeletes;
 
 class CourseRegistration extends Model
 {
-    use HasFactory;
+    use HasFactory; // Hapus: , SoftDeletes
 
     /**
      * The attributes that are mass assignable.
@@ -43,7 +45,10 @@ class CourseRegistration extends Model
      */
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class)->withDefault([
+            'name' => 'Pengguna Dihapus',
+            'email' => 'N/A'
+        ]);
     }
 
     /**
@@ -55,7 +60,7 @@ class CourseRegistration extends Model
     }
 
     /**
-     * Get formatted price attribute
+     * Get formatted price attribute.
      */
     public function getFormattedPriceAttribute(): string
     {
@@ -63,7 +68,7 @@ class CourseRegistration extends Model
     }
 
     /**
-     * Get formatted final price attribute
+     * Get formatted final price attribute.
      */
     public function getFormattedFinalPriceAttribute(): string
     {
@@ -71,7 +76,7 @@ class CourseRegistration extends Model
     }
 
     /**
-     * Get status badge class
+     * Get status badge class attribute.
      */
     public function getStatusBadgeClassAttribute(): string
     {
@@ -84,7 +89,7 @@ class CourseRegistration extends Model
     }
 
     /**
-     * Get progress percentage
+     * Get progress percentage attribute.
      */
     public function getProgressPercentageAttribute(): string
     {
@@ -92,7 +97,7 @@ class CourseRegistration extends Model
     }
 
     /**
-     * Check if registration is completed
+     * Check if course is completed.
      */
     public function getIsCompletedAttribute(): bool
     {
@@ -100,7 +105,7 @@ class CourseRegistration extends Model
     }
 
     /**
-     * Scope approved registrations
+     * Scope approved registrations.
      */
     public function scopeApproved($query)
     {
@@ -108,10 +113,74 @@ class CourseRegistration extends Model
     }
 
     /**
-     * Scope pending registrations
+     * Scope pending registrations.
      */
     public function scopePending($query)
     {
         return $query->where('status', 'pending');
+    }
+
+    /**
+     * Scope cancelled registrations.
+     */
+    public function scopeCancelled($query)
+    {
+        return $query->where('status', 'cancelled');
+    }
+
+    /**
+     * Scope by user ID.
+     */
+    public function scopeByUser($query, $userId)
+    {
+        return $query->where('user_id', $userId);
+    }
+
+    /**
+     * Scope by course ID.
+     */
+    public function scopeByCourse($query, $courseId)
+    {
+        return $query->where('course_id', $courseId);
+    }
+
+    /**
+     * Check if registration is active.
+     */
+    public function getIsActiveAttribute(): bool
+    {
+        return $this->status === 'paid' && $this->progress < 100;
+    }
+
+    /**
+     * Check if registration is completed.
+     */
+    public function getIsFullyCompletedAttribute(): bool
+    {
+        return $this->status === 'paid' && $this->progress >= 100;
+    }
+
+    /**
+     * Get days since enrolled.
+     */
+    public function getDaysSinceEnrolledAttribute(): ?int
+    {
+        return $this->enrolled_at ? $this->enrolled_at->diffInDays(now()) : null;
+    }
+
+    /**
+     * Get discount amount.
+     */
+    public function getDiscountAmountAttribute(): float
+    {
+        return $this->price - $this->final_price;
+    }
+
+    /**
+     * Get formatted discount amount.
+     */
+    public function getFormattedDiscountAmountAttribute(): string
+    {
+        return 'Rp' . number_format($this->discount_amount, 0, ',', '.');
     }
 }
