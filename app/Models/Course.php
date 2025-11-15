@@ -349,6 +349,13 @@ class Course extends Model
             ->first();
     }
 
+
+    // Add this method to the Course model
+public function getCheckoutUrlAttribute()
+{
+    return route('checkout.show', $this->id);
+}
+
     /**
      * Boot method for model events
      */

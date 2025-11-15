@@ -148,23 +148,23 @@
                             </div>
                             
                             <!-- Action Button -->
-                            <div class="flex gap-2">
-                                <a href="{{ route('course.show.detail', $course->id) }}" 
-                                   class="flex-1 bg-blue-500 hover:bg-blue-600 text-white text-center py-3 px-4 rounded-lg transition-all font-medium">
-                                    <i class="fas fa-eye mr-2"></i> Lihat Detail
-                                </a>
-                                @if($course->is_active && $course->has_available_slots)
-                                <button onclick="showRegistrationForm({{ $course->id }})" 
-                                        class="bg-orange-500 hover:bg-orange-600 text-white py-3 px-4 rounded-lg transition-all font-medium">
-                                    <i class="fas fa-shopping-cart mr-2"></i> Daftar
-                                </button>
-                                @else
-                                <button disabled 
-                                        class="bg-gray-400 text-white py-3 px-4 rounded-lg font-medium cursor-not-allowed">
-                                    <i class="fas fa-clock mr-2"></i> Tidak Tersedia
-                                </button>
-                                @endif
-                            </div>
+<div class="flex gap-2">
+    <a href="{{ route('course.show.detail', $course->id) }}" 
+       class="flex-1 bg-blue-500 hover:bg-blue-600 text-white text-center py-3 px-4 rounded-lg transition-all font-medium">
+        <i class="fas fa-eye mr-2"></i> Lihat Detail
+    </a>
+    @if($course->is_active && $course->has_available_slots)
+    <a href="{{ route('checkout.show', $course->id) }}" 
+            class="bg-orange-500 hover:bg-orange-600 text-white py-3 px-4 rounded-lg transition-all font-medium">
+        <i class="fas fa-shopping-cart mr-2"></i> Daftar
+    </a>
+    @else
+    <button disabled 
+            class="bg-gray-400 text-white py-3 px-4 rounded-lg font-medium cursor-not-allowed">
+        <i class="fas fa-clock mr-2"></i> Tidak Tersedia
+    </button>
+    @endif
+</div>
                         </div>
                     </div>
                     @endforeach
