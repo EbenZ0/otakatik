@@ -80,3 +80,56 @@ Route::middleware(['auth', 'instructor'])->prefix('instructor')->name('instructo
     Route::put('/submissions/{id}/grade', [InstructorController::class, 'gradeSubmission'])->name('submissions.grade');
     Route::put('/students/{id}/progress', [InstructorController::class, 'updateStudentProgress'])->name('students.progress');
 });
+
+<?php
+// Tambahkan ini ke routes/web.php
+
+// Student routes (sudah ada, tinggal tambah refund)
+Route::middleware(['auth', 'verified'])->group(function () {
+    // Student dashboard
+    Route::get('/dashboard', [StudentController::class, 'dashboard'])->name('student.dashboard');
+    Route::get('/my-courses', [StudentController::class, 'myCourses'])->name('student.courses');
+    Route::get('/course/{registrationId}', [StudentController::class, 'courseDetail'])->name('student.course-detail');
+    
+    // Profile
+    Route::get('/profile', [StudentController::class, 'profile'])->name('student.profile');
+    Route::post('/profile/update', [StudentController::class, 'updateProfile'])->name('student.profile.update');
+    
+    // REFUND ROUTES - Student Side
+    Route::prefix('refund')->name('refund.')->group(function () {
+        Route::get('/create/{registrationId}', [RefundController::class, 'create'])->name('create');
+        Route::post('/store/{registrationId}', [RefundController::class, 'store'])->name('store');
+        Route::get('/view/{id}', [RefundController::class, 'view'])->name('view');
+    });
+});
+
+// Admin routes
+Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
+    
+    // Courses
+    Route::get('/courses', [AdminController::class, 'courses'])->name('courses.index');
+    Route::get('/courses/create', [AdminController::class, 'courseCreate'])->name('courses.create');
+    Route::post('/courses', [AdminController::class, 'courseStore'])->name('courses.store');
+    Route::get('/courses/{id}/edit', [AdminController::class, 'courseEdit'])->name('courses.edit');
+    Route::post('/courses/{id}', [AdminController::class, 'courseUpdate'])->name('courses.update');
+    Route::delete('/courses/{id}', [AdminController::class, 'courseDelete'])->name('courses.delete');
+    
+    // Users
+    Route::get('/users', [AdminController::class, 'users'])->name('users.index');
+    Route::delete('/users/{id}', [AdminController::class, 'userDelete'])->name('users.delete');
+    
+    // Registrations
+    Route::get('/registrations', [AdminController::class, 'registrations'])->name('registrations.index');
+    
+    // Analytics
+    Route::get('/analytics', [AdminController::class, 'analytics'])->name('analytics');
+    
+    // REFUND ROUTES - Admin Side
+    Route::prefix('refunds')->name('refunds.')->group(function () {
+        Route::get('/', [RefundController::class, 'adminIndex'])->name('index');
+        Route::get('/{id}', [RefundController::class, 'adminShow'])->name('show');
+        Route::post('/{id}/approve', [RefundController::class, 'approve'])->name('approve');
+        Route::post('/{id}/reject', [RefundController::class, 'reject'])->name('reject');
+    });
+});
