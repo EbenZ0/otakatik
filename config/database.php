@@ -114,28 +114,43 @@ return [
         ],
 
         'oracle' => [
-            'driver' => 'oracle',
-            'host' => env('DB_HOST', '127.0.0.1'),
-            'port' => env('DB_PORT', '1521'),
-            'database' => env('DB_DATABASE', 'otakatik'),
-            'service_name' => env('DB_SERVICE_NAME', 'XE'),
-            'username' => env('DB_USERNAME', 'system'),
-            'password' => env('DB_PASSWORD', '12345678'),
-            'charset' => 'AL32UTF8',
-            'prefix' => '',
-            'prefix_schema' => env('DB_SCHEMA_PREFIX', ''),
-            'edition' => env('DB_EDITION'),
-            'server_version' => env('DB_SERVER_VERSION', '11g'),
-            'load_balance' => env('DB_LOAD_BALANCE', 'yes'),
-            'dynamic' => [],
-            'session_vars' => [
-                'NLS_TIME_FORMAT' => 'HH24:MI:SS',
-                'NLS_DATE_FORMAT' => 'YYYY-MM-DD HH24:MI:SS',
-                'NLS_TIMESTAMP_FORMAT' => 'YYYY-MM-DD HH24:MI:SS',
-                'NLS_TIMESTAMP_TZ_FORMAT' => 'YYYY-MM-DD HH24:MI:SS TZH:TZM',
-                'NLS_NUMERIC_CHARACTERS' => '.,',
-            ],
-        ],
+    'driver' => 'oracle',
+    'host' => env('DB_HOST', '127.0.0.1'),
+    'port' => env('DB_PORT', '1521'),
+    'database' => env('DB_DATABASE', 'otakatik'),
+    'service_name' => env('DB_SERVICE_NAME', 'XE'),
+    'username' => env('DB_USERNAME', 'C##OTAKATIK'),
+    'password' => env('DB_PASSWORD', '12345678'),
+    'charset' => env('DB_CHARSET', 'AL32UTF8'),
+    
+    'tns' => env('DB_TNS', '(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=127.0.0.1)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=XE)(SERVER=DEDICATED)))'),
+    
+    'prefix' => '',
+    'prefix_schema' => env('DB_SCHEMA', 'C##OTAKATIK'),
+    'schema' => env('DB_SCHEMA', 'C##OTAKATIK'),
+    
+    'edition' => env('DB_EDITION', ''),
+    'server_version' => env('DB_SERVER_VERSION', '12c'),
+    'load_balance' => env('DB_LOAD_BALANCE', 'no'),
+    
+    'dynamic' => [],
+    
+    'session_vars' => [
+        'NLS_TIME_FORMAT' => 'HH24:MI:SS',
+        'NLS_DATE_FORMAT' => 'YYYY-MM-DD HH24:MI:SS',
+        'NLS_TIMESTAMP_FORMAT' => 'YYYY-MM-DD HH24:MI:SS',
+        'NLS_TIMESTAMP_TZ_FORMAT' => 'YYYY-MM-DD HH24:MI:SS TZH:TZM',
+        'NLS_NUMERIC_CHARACTERS' => '.,',
+    ],
+    
+    'options' => [
+        PDO::ATTR_CASE => PDO::CASE_LOWER,
+        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+        PDO::ATTR_ORACLE_NULLS => PDO::NULL_NATURAL,
+        PDO::ATTR_STRINGIFY_FETCHES => false,
+        PDO::ATTR_PERSISTENT => false,
+    ],
+],
 
     ],
 
