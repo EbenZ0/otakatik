@@ -103,3 +103,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/view/{id}', [RefundController::class, 'view'])->name('view');
     });
 });
+
+
+
+Route::post('/course/register', [CourseRegistrationController::class, 'register'])->name('course.register')->middleware('auth');

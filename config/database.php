@@ -129,7 +129,7 @@ return [
     'prefix_schema' => env('DB_SCHEMA', 'C##OTAKATIK'),
     'schema' => env('DB_SCHEMA', 'C##OTAKATIK'),
     
-    'edition' => env('DB_EDITION', ''),
+    'edition' => env('DB_EDITION') ? env('DB_EDITION') : null,
     'server_version' => env('DB_SERVER_VERSION', '12c'),
     'load_balance' => env('DB_LOAD_BALANCE', 'no'),
     

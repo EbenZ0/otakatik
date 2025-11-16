@@ -12,9 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->boolean('is_instructor')->default(false)->after('is_admin');
-            $table->text('bio')->nullable()->after('date_of_birth');
-            $table->string('expertise')->nullable()->after('bio');
+            $table->boolean('is_instructor')->default(false);
+            $table->text('bio')->nullable();
+            $table->string('expertise')->nullable();
         });
     }
 

@@ -12,11 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->string('age_range')->nullable()->after('is_admin');
-            $table->string('education_level')->nullable()->after('age_range');
-            $table->string('location')->nullable()->after('education_level');
-            $table->string('phone')->nullable()->after('location');
-            $table->date('date_of_birth')->nullable()->after('phone');
+            $table->boolean('is_admin')->default(false);
+            $table->string('age_range')->nullable();
+            $table->string('education_level')->nullable();
+            $table->string('location')->nullable();
+            $table->string('phone')->nullable();
+            $table->date('date_of_birth')->nullable();
         });
     }
 
@@ -26,7 +27,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn(['age_range', 'education_level', 'location', 'phone', 'date_of_birth']);
+            $table->dropColumn(['is_admin', 'age_range', 'education_level', 'location', 'phone', 'date_of_birth']);
         });
     }
 };

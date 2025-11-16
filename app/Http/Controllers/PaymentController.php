@@ -20,123 +20,118 @@ class PaymentController extends Controller
     }
 
     /**
-     * Show checkout page
-     */
-    public function checkout($courseId)
-    {
-        $course = Course::where('is_active', true)->findOrFail($courseId);
-        $user = Auth::user();
+ * Process payment
+ */
+public function processPayment(Request $request, $courseId)
+{
+    $request->validate([
+        'payment_method' => 'required|in:bank_transfer,credit_card,gopay,shopeepay,instructor_free',
+        'voucher_code' => 'nullable|string|max:50'
+    ]);
 
-        // Check if user already enrolled
-        $existingRegistration = CourseRegistration::where('user_id', $user->id)
-            ->where('course_id', $courseId)
-            ->where('status', 'paid')
-            ->first();
+    $course = Course::where('is_active', true)->findOrFail($courseId);
+    $user = Auth::user();
 
-        if ($existingRegistration) {
-            return redirect()->route('course.show.detail', $courseId)
-                ->with('error', 'You are already enrolled in this course!');
-        }
-
-        // Calculate final price
-        $finalPrice = $course->price;
-        $discountAmount = 0;
-
-        return view('checkout', compact('course', 'user', 'finalPrice', 'discountAmount'));
-    }
-
-    /**
-     * Process payment
-     */
-    public function processPayment(Request $request, $courseId)
-    {
-        $request->validate([
-            'payment_method' => 'required|in:bank_transfer,credit_card,gopay,shopeepay',
-            'voucher_code' => 'nullable|string|max:50'
-        ]);
-
-        $course = Course::where('is_active', true)->findOrFail($courseId);
-        $user = Auth::user();
-
-        DB::beginTransaction();
-        try {
+    DB::beginTransaction();
+    try {
+        // Check if user is instructor AND payment method is instructor_free
+        if ($user->is_instructor && $request->payment_method === 'instructor_free') {
+            $finalPrice = 0;
+            $isInstructor = true;
+        } else {
             // Calculate final price with voucher
             $finalPrice = $this->calculateFinalPrice($course, $request->voucher_code);
-            
-            // Create order ID
-            $orderId = Payment::generateOrderId();
+            $isInstructor = false;
+        }
+        
+        // Create order ID
+        $orderId = Payment::generateOrderId();
 
-            // Create registration record
-            $registration = CourseRegistration::create([
-                'user_id' => $user->id,
-                'course_id' => $course->id,
-                'order_id' => $orderId,
-                'nama_lengkap' => $user->name,
-                'ttl' => 'Auto-generated',
-                'tempat_tinggal' => 'Auto-generated', 
-                'gender' => 'Laki-laki',
-                'price' => $course->price,
-                'final_price' => $finalPrice,
-                'discount_code' => $request->voucher_code,
-                'payment_method' => $request->payment_method,
-                'status' => 'pending',
-                'progress' => 0,
-            ]);
+        // Create registration record
+        $registration = CourseRegistration::create([
+            'user_id' => $user->id,
+            'course_id' => $course->id,
+            'order_id' => $orderId,
+            'nama_lengkap' => $user->name,
+            'ttl' => 'Auto-generated',
+            'tempat_tinggal' => 'Auto-generated', 
+            'gender' => 'Laki-laki',
+            'price' => $course->price,
+            'final_price' => $finalPrice,
+            'discount_code' => $request->voucher_code,
+            'payment_method' => $request->payment_method,
+            'status' => $isInstructor ? 'paid' : 'pending',
+            'progress' => 0,
+        ]);
 
-            // Create payment record
-            $payment = Payment::create([
-                'user_id' => $user->id,
-                'course_id' => $course->id,
-                'order_id' => $orderId,
-                'gross_amount' => $finalPrice,
-                'payment_type' => $request->payment_method,
-                'transaction_status' => 'pending',
-                'status_message' => 'Waiting for payment'
-            ]);
+        // Create payment record
+        $payment = Payment::create([
+            'user_id' => $user->id,
+            'course_id' => $course->id,
+            'order_id' => $orderId,
+            'gross_amount' => $finalPrice,
+            'payment_type' => $request->payment_method,
+            'transaction_status' => $isInstructor ? 'settlement' : 'pending',
+            'status_message' => $isInstructor ? 'Free access for instructor' : 'Waiting for payment'
+        ]);
 
-            // Prepare Midtrans transaction
-            $transactionDetails = [
-                'transaction_details' => [
-                    'order_id' => $orderId,
-                    'gross_amount' => (int) $finalPrice,
-                ],
-                'customer_details' => [
-                    'first_name' => $user->name,
-                    'email' => $user->email,
-                ],
-                'item_details' => [
-                    [
-                        'id' => $course->id,
-                        'price' => (int) $finalPrice,
-                        'quantity' => 1,
-                        'name' => $course->title,
-                    ]
-                ]
-            ];
-
-            // Get Snap token from Midtrans
-            $midtransResponse = $this->midtransService->createTransaction($transactionDetails);
-
-            if (!$midtransResponse['success']) {
-                throw new \Exception('Payment gateway error: ' . $midtransResponse['message']);
-            }
-
+        // Jika instructor, langsung handle success
+        if ($isInstructor) {
+            $this->handleSuccessfulPayment($payment, $registration);
             DB::commit();
-
+            
             return response()->json([
                 'success' => true,
-                'snap_token' => $midtransResponse['snap_token'],
-                'order_id' => $orderId
+                'is_instructor' => true,
+                'message' => 'Enrolled successfully!'
             ]);
-
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json([
-                'success' => false,
-                'message' => 'Payment processing failed: ' . $e->getMessage()
-            ], 500);
         }
+
+        // Prepare Midtrans transaction for non-instructor
+        $transactionDetails = [
+            'transaction_details' => [
+                'order_id' => $orderId,
+                'gross_amount' => (int) $finalPrice,
+            ],
+            'customer_details' => [
+                'first_name' => $user->name,
+                'email' => $user->email,
+            ],
+            'item_details' => [
+                [
+                    'id' => $course->id,
+                    'price' => (int) $finalPrice,
+                    'quantity' => 1,
+                    'name' => $course->title,
+                ]
+            ]
+        ];
+
+        // Get Snap token from Midtrans
+        $midtransResponse = $this->midtransService->createTransaction($transactionDetails);
+
+        if (!$midtransResponse['success']) {
+            throw new \Exception('Payment gateway error: ' . $midtransResponse['message']);
+        }
+
+        DB::commit();
+
+        return response()->json([
+            'success' => true,
+            'snap_token' => $midtransResponse['snap_token'],
+            'order_id' => $orderId,
+            'is_instructor' => false
+        ]);
+
+    } catch (\Exception $e) {
+        DB::rollBack();
+        \Log::error('Payment processing error: ' . $e->getMessage());
+        return response()->json([
+            'success' => false,
+            'message' => 'Payment processing failed: ' . $e->getMessage()
+        ], 500);
     }
+}
 
     /**
      * Handle payment notification from Midtrans (webhook)
@@ -245,13 +240,11 @@ class PaymentController extends Controller
         $finalPrice = $course->price;
 
         if ($voucherCode) {
-            // Apply voucher logic here
-            if ($voucherCode === 'DISKON10') {
-                $finalPrice = $course->price * 0.9; // 10% discount
-            } elseif ($voucherCode === 'DISKON20') {
-                $finalPrice = $course->price * 0.8; // 20% discount
+            // Check if voucher matches course's discount code
+            if ($voucherCode === $course->discount_code && $course->discount_percent > 0) {
+                $discountAmount = $course->price * ($course->discount_percent / 100);
+                $finalPrice = $course->price - $discountAmount;
             }
-            // Add more voucher codes as needed
         }
 
         return $finalPrice;
@@ -268,10 +261,12 @@ class PaymentController extends Controller
         ]);
 
         $course = Course::find($request->course_id);
-        $finalPrice = $this->calculateFinalPrice($course, $request->voucher_code);
-        $discountAmount = $course->price - $finalPrice;
-
-        if ($finalPrice < $course->price) {
+        
+        // Check if voucher code matches and has discount percent
+        if ($request->voucher_code === $course->discount_code && $course->discount_percent > 0) {
+            $finalPrice = $this->calculateFinalPrice($course, $request->voucher_code);
+            $discountAmount = $course->price - $finalPrice;
+            
             return response()->json([
                 'valid' => true,
                 'discount_amount' => $discountAmount,

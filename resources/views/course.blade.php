@@ -128,23 +128,9 @@
                             
                             <!-- Pricing -->
                             <div class="mb-4">
-                                @if($course->discount_percent > 0)
-                                <div class="flex items-center gap-2">
-                                    <span class="text-2xl font-bold text-green-600">
-                                        {{ $course->formatted_final_price }}
-                                    </span>
-                                    <span class="text-lg text-gray-500 line-through">
-                                        {{ $course->formatted_price }}
-                                    </span>
-                                    <span class="bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs font-medium">
-                                        -{{ $course->discount_percent }}%
-                                    </span>
-                                </div>
-                                @else
                                 <span class="text-2xl font-bold text-gray-800">
-                                    {{ $course->formatted_price }}
-                                </span>
-                                @endif
+    {{ $course->formatted_price }}
+</span>
                             </div>
                             
                             <!-- Action Button -->

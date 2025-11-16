@@ -209,7 +209,7 @@
     <div id="registrationModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
         <div class="bg-white rounded-2xl p-6 max-w-md w-full mx-4">
             <h3 class="text-xl font-bold text-gray-800 mb-4">Enroll in Course</h3>
-            <form action="{{ route('course.register') }}" method="POST">
+            <form action="{{ route('checkout.show', $course->id) }}" method="POST">
                 @csrf
                 <input type="hidden" name="course_id" id="course_id">
                 

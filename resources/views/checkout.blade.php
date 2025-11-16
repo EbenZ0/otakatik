@@ -75,6 +75,7 @@
                             </div>
                         </div>
 
+                        @if(!Auth::user()->is_instructor)
                         <!-- Voucher Code -->
                         <div class="mb-6">
                             <label class="block text-sm font-medium text-gray-700 mb-2">Voucher Code (Optional)</label>
@@ -142,6 +143,16 @@
                                 all payments are processed securely through Midtrans.
                             </label>
                         </div>
+                        @else
+                        <!-- Instructor Info -->
+                        <div class="flex items-start gap-3 p-4 bg-green-50 rounded-lg border-2 border-green-200">
+                            <i class="fas fa-star text-green-600 text-xl mt-1"></i>
+                            <div>
+                                <h4 class="font-bold text-green-800 mb-1">Instructor Benefits</h4>
+                                <p class="text-sm text-green-700">Sebagai seorang instructor, Anda mendapatkan akses gratis ke semua course di platform kami untuk memastikan kualitas pengajaran yang terbaik.</p>
+                            </div>
+                        </div>
+                        @endif
                     </div>
                 </div>
 
@@ -150,38 +161,57 @@
                     <div class="bg-white rounded-2xl shadow-lg p-6 sticky top-32">
                         <h3 class="text-xl font-bold text-gray-800 mb-4">Order Total</h3>
                         
-                        <div class="space-y-3 mb-6">
-                            <div class="flex justify-between text-sm">
-                                <span class="text-gray-600">Course Price</span>
-                                <span class="font-medium" id="coursePrice">Rp{{ number_format($course->price, 0, ',', '.') }}</span>
+                        @if(Auth::user()->is_instructor)
+                            <!-- Instructor Free Access -->
+                            <div class="bg-green-50 border-2 border-green-500 rounded-lg p-4 mb-6">
+                                <div class="flex items-center gap-2 mb-3">
+                                    <i class="fas fa-star text-green-600 text-xl"></i>
+                                    <h4 class="font-bold text-green-800">Instructor Free Access</h4>
+                                </div>
+                                <p class="text-green-700 text-sm mb-4">Anda mendapatkan akses gratis ke semua course sebagai instructor.</p>
+                                <div class="bg-green-100 rounded-lg p-3 mb-4">
+                                    <p class="text-green-800 font-bold text-lg">Gratis 100%</p>
+                                </div>
+                                <button type="button" onclick="enrollFreeAsInstructor()" 
+                                        class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-4 px-6 rounded-lg transition-all">
+                                    <i class="fas fa-check mr-2"></i> Enroll Now
+                                </button>
                             </div>
-                            <div class="flex justify-between text-sm">
-                                <span class="text-gray-600">Discount</span>
-                                <span class="font-medium text-green-600" id="discountAmount">-Rp0</span>
-                            </div>
-                            <div class="border-t pt-3">
-                                <div class="flex justify-between text-lg font-bold">
-                                    <span>Total</span>
-                                    <span id="finalPrice">Rp{{ number_format($finalPrice, 0, ',', '.') }}</span>
+                        @else
+                            <!-- Regular User Payment -->
+                            <div class="space-y-3 mb-6">
+                                <div class="flex justify-between text-sm">
+                                    <span class="text-gray-600">Course Price</span>
+                                    <span class="font-medium" id="coursePrice">Rp{{ number_format($course->price, 0, ',', '.') }}</span>
+                                </div>
+                                <div class="flex justify-between text-sm">
+                                    <span class="text-gray-600">Discount</span>
+                                    <span class="font-medium text-green-600" id="discountAmount">-Rp0</span>
+                                </div>
+                                <div class="border-t pt-3">
+                                    <div class="flex justify-between text-lg font-bold">
+                                        <span>Total</span>
+                                        <span id="finalPrice">Rp{{ number_format($finalPrice, 0, ',', '.') }}</span>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <button type="button" onclick="processPayment()" 
-                                class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-6 rounded-lg transition-all disabled:bg-gray-400 disabled:cursor-not-allowed"
-                                id="payButton" disabled>
-                            <i class="fas fa-lock mr-2"></i> Pay Now
-                        </button>
-
-                        <!-- Development Only - Simulate Payment -->
-                        <div class="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-                            <p class="text-sm text-yellow-800 font-medium mb-2">Development Mode</p>
-                            <button type="button" onclick="simulatePayment()" 
-                                    class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg transition-all text-sm">
-                                <i class="fas fa-bolt mr-2"></i> Simulate Successful Payment
+                            <button type="button" onclick="processPayment()" 
+                                    class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-6 rounded-lg transition-all disabled:bg-gray-400 disabled:cursor-not-allowed"
+                                    id="payButton" disabled>
+                                <i class="fas fa-lock mr-2"></i> Pay Now
                             </button>
-                        </div>
 
+                            <!-- Development Only - Simulate Payment -->
+                            <div class="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                                <p class="text-sm text-yellow-800 font-medium mb-2">Development Mode</p>
+                                <button type="button" onclick="simulatePayment()" 
+                                        class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg transition-all text-sm">
+                                    <i class="fas fa-bolt mr-2"></i> Simulate Successful Payment
+                                </button>
+                            </div>
+                        @endif
+                        
                         <p class="text-xs text-gray-500 text-center mt-4">
                             <i class="fas fa-shield-alt mr-1"></i>
                             Secure payment powered by Midtrans
@@ -227,7 +257,10 @@
         });
 
         // Terms agreement
-        document.getElementById('termsAgreement').addEventListener('change', checkPaymentReady);
+        const termsElement = document.getElementById('termsAgreement');
+        if (termsElement) {
+            termsElement.addEventListener('change', checkPaymentReady);
+        }
 
         function checkPaymentReady() {
             const termsChecked = document.getElementById('termsAgreement').checked;
@@ -283,6 +316,40 @@
         function resetPrices() {
             document.getElementById('discountAmount').textContent = '-Rp0';
             document.getElementById('finalPrice').textContent = `Rp${finalPrice.toLocaleString()}`;
+        }
+
+        // Enroll as Instructor (Free)
+        async function enrollFreeAsInstructor() {
+            const button = event.target;
+            button.disabled = true;
+            button.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Enrolling...';
+
+            try {
+                const response = await fetch(`/checkout/process/{{ $course->id }}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({
+                        payment_method: 'instructor_free',
+                        voucher_code: ''
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success && data.is_instructor) {
+                    // Instructor enrollment success - redirect to my courses
+                    window.location.href = '/my-courses?enrolled=success';
+                } else {
+                    throw new Error(data.message || 'Enrollment failed');
+                }
+            } catch (error) {
+                alert('Enrollment failed: ' + error.message);
+                button.disabled = false;
+                button.innerHTML = '<i class="fas fa-check mr-2"></i> Enroll Now';
+            }
         }
 
         // Process payment

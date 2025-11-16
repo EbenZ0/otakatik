@@ -9,13 +9,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('courses', function (Blueprint $table) {
-            $table->integer('duration_days')->default(30)->after('max_quota'); // Durasi kursus dalam hari
-            $table->date('start_date')->nullable()->after('duration_days');
-            $table->date('end_date')->nullable()->after('start_date');
-            $table->boolean('is_rescheduled')->default(false)->after('is_active');
-            $table->date('rescheduled_start_date')->nullable()->after('is_rescheduled');
-            $table->string('reschedule_reason')->nullable()->after('rescheduled_start_date');
-            $table->boolean('quota_not_met')->default(false)->after('reschedule_reason');
+            $table->integer('duration_days')->default(30);
+            $table->date('start_date')->nullable();
+            $table->date('end_date')->nullable();
+            $table->boolean('is_rescheduled')->default(false);
+            $table->date('rescheduled_start_date')->nullable();
+            $table->string('reschedule_reason')->nullable();
+            $table->boolean('quota_not_met')->default(false);
         });
     }
 
