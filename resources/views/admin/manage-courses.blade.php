@@ -247,6 +247,46 @@
                                         @enderror
                                     </div>
                                 </div>
+
+                                <!-- Duration & Schedule -->
+                                <div class="grid grid-cols-3 gap-2">
+                                    <div>
+                                        <label class="text-sm font-medium text-gray-700 mb-2 block">Durasi (Hari)</label>
+                                        <input type="number" name="duration_days" min="1"
+                                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                               placeholder="30">
+                                        @error('duration_days')
+                                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                        @enderror
+                                    </div>
+                                    <div>
+                                        <label class="text-sm font-medium text-gray-700 mb-2 block">Tanggal Mulai</label>
+                                        <input type="date" name="start_date"
+                                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                        @error('start_date')
+                                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                        @enderror
+                                    </div>
+                                    <div>
+                                        <label class="text-sm font-medium text-gray-700 mb-2 block">Tanggal Selesai</label>
+                                        <input type="date" name="end_date"
+                                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                        @error('end_date')
+                                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                        @enderror
+                                    </div>
+                                </div>
+
+                                <!-- Reschedule Info -->
+                                <div>
+                                    <label class="text-sm font-medium text-gray-700 mb-2 block">Reschedule (Jika ada perubahan jadwal)</label>
+                                    <textarea name="reschedule_reason" rows="2"
+                                              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                              placeholder="Alasan perubahan jadwal (optional)"></textarea>
+                                    @error('reschedule_reason')
+                                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                    @enderror
+                                </div>
                                 
                                 <!-- Active Toggle -->
                                 <div class="flex items-center gap-3 p-4 bg-gray-50 rounded-lg">

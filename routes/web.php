@@ -9,6 +9,8 @@ use App\Http\Controllers\InstructorController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\RefundController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\QuizController;
+use App\Http\Controllers\NotificationController;
 
 // Public Routes
 Route::get('/', function () {
@@ -35,6 +37,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/my-courses', [CourseController::class, 'myCourses'])->name('my.courses');
     Route::get('/purchase-history', [CourseController::class, 'purchaseHistory'])->name('purchase.history');
     Route::put('/course-progress/{id}', [CourseController::class, 'updateProgress'])->name('course.progress.update');
+    
+    // Profile
+    Route::get('/profile', [StudentController::class, 'profile'])->name('profile');
+    Route::post('/profile/update', [StudentController::class, 'updateProfile'])->name('profile.update');
 });
 
 // Payment Routes
@@ -44,6 +50,15 @@ Route::middleware(['auth'])->prefix('checkout')->name('checkout.')->group(functi
     Route::post('/voucher-check', [PaymentController::class, 'checkVoucher'])->name('voucher.check');
     Route::post('/notification', [PaymentController::class, 'handleNotification'])->name('notification');
     Route::get('/simulate-success/{orderId}', [PaymentController::class, 'simulateSuccess'])->name('simulate.success');
+});
+
+// Notification Routes
+Route::middleware(['auth'])->prefix('notifications')->name('notifications.')->group(function () {
+    Route::get('/', [NotificationController::class, 'index'])->name('index');
+    Route::post('/{id}/mark-read', [NotificationController::class, 'markAsRead'])->name('mark-read');
+    Route::post('/mark-all-read', [NotificationController::class, 'markAllAsRead'])->name('mark-all-read');
+    Route::get('/unread-count', [NotificationController::class, 'unreadCount'])->name('unread-count');
+    Route::delete('/{id}', [NotificationController::class, 'destroy'])->name('destroy');
 });
 
 // Admin Routes
@@ -83,6 +98,21 @@ Route::middleware(['auth', 'instructor'])->prefix('instructor')->name('instructo
     Route::get('/assignments/{id}/submissions', [InstructorController::class, 'assignmentSubmissions'])->name('submissions');
     Route::put('/submissions/{id}/grade', [InstructorController::class, 'gradeSubmission'])->name('submissions.grade');
     Route::put('/students/{id}/progress', [InstructorController::class, 'updateStudentProgress'])->name('students.progress');
+    
+    // Quiz Routes (Instructor)
+    Route::prefix('courses/{courseId}/quiz')->name('quiz.')->group(function () {
+        Route::get('/', [QuizController::class, 'index'])->name('index');
+        Route::get('/create', [QuizController::class, 'create'])->name('create');
+        Route::post('/', [QuizController::class, 'store'])->name('store');
+        Route::get('/{quizId}/edit', [QuizController::class, 'edit'])->name('edit');
+        Route::put('/{quizId}', [QuizController::class, 'update'])->name('update');
+        Route::delete('/{quizId}', [QuizController::class, 'destroy'])->name('destroy');
+        Route::post('/{quizId}/questions', [QuizController::class, 'addQuestion'])->name('question.add');
+        Route::put('/{quizId}/questions/{questionId}', [QuizController::class, 'updateQuestion'])->name('question.update');
+        Route::delete('/{quizId}/questions/{questionId}', [QuizController::class, 'deleteQuestion'])->name('question.delete');
+        Route::get('/{quizId}/submissions', [QuizController::class, 'submissions'])->name('submissions');
+        Route::get('/{quizId}/submissions/{submissionId}', [QuizController::class, 'submissionDetail'])->name('submission.detail');
+    });
 });
 
 // Student routes with refund
@@ -95,6 +125,22 @@ Route::middleware(['auth'])->group(function () {
     // Profile
     Route::get('/student/profile', [StudentController::class, 'profile'])->name('student.profile');
     Route::post('/student/profile/update', [StudentController::class, 'updateProfile'])->name('student.profile.update');
+    
+    // Quiz Routes (Student)
+    Route::prefix('student/course/{courseId}/quiz')->name('student.quiz.')->group(function () {
+        Route::get('/', [QuizController::class, 'studentQuizzes'])->name('index');
+        Route::get('/{quizId}/start', [QuizController::class, 'start'])->name('start');
+        Route::get('/{quizId}/submission/{submissionId}', [QuizController::class, 'continue'])->name('continue');
+        Route::post('/{quizId}/submission/{submissionId}/submit', [QuizController::class, 'submit'])->name('submit');
+        Route::get('/{quizId}/submission/{submissionId}/result', [QuizController::class, 'result'])->name('result');
+    });
+    
+    // Assignment Routes (Student)
+    Route::prefix('student/assignments')->name('student.assignment.')->group(function () {
+        Route::get('/{assignmentId}/submit', [StudentController::class, 'submitAssignmentForm'])->name('submit.form');
+        Route::post('/{assignmentId}/submit', [StudentController::class, 'submitAssignment'])->name('submit');
+        Route::get('/{assignmentId}/view', [StudentController::class, 'viewSubmission'])->name('view');
+    });
     
     // REFUND ROUTES - Student Side
     Route::prefix('refund')->name('refund.')->group(function () {

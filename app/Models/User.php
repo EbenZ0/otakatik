@@ -19,9 +19,11 @@ class User extends Authenticatable
         'is_instructor',
         'age_range',
         'education_level',
+        'education_name',
         'location',
         'phone',
         'date_of_birth',
+        'profile_picture',
         'bio',
         'expertise'
     ];
@@ -68,6 +70,14 @@ class User extends Authenticatable
     }
 
     /**
+     * Get notifications for the user
+     */
+    public function notifications()
+    {
+        return $this->hasMany(Notification::class);
+    }
+
+    /**
      * Check if user is admin
      */
     public function isAdmin(): bool
@@ -92,6 +102,17 @@ class User extends Authenticatable
     }
 
     /**
+     * Get user's age from date_of_birth
+     */
+    public function getAgeAttribute(): ?int
+    {
+        if (!$this->date_of_birth) {
+            return null;
+        }
+        return $this->date_of_birth->diffInYears(now());
+    }
+
+    /**
      * Get formatted created date
      */
     public function getJoinedDateAttribute(): string
@@ -99,9 +120,16 @@ class User extends Authenticatable
         return $this->created_at->format('M d, Y');
     }
 
-    /**
-     * Get user's status badge class
-     */
+    protected $appends = [
+        'initial',
+        'age',
+        'joined_date',
+        'status_badge_class',
+        'status_text',
+        'course_count',
+        'enrolled_courses',
+        'pending_registrations'
+    ];
     public function getStatusBadgeClassAttribute(): string
     {
         if ($this->is_admin) {

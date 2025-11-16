@@ -5,6 +5,14 @@ namespace App\Providers;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
+use App\Events\CourseEnrolled;
+use App\Events\AssignmentPosted;
+use App\Events\QuizPosted;
+use App\Events\MaterialPosted;
+use App\Listeners\CreateCourseEnrolledNotification;
+use App\Listeners\NotifyAssignmentPosted;
+use App\Listeners\NotifyQuizPosted;
+use App\Listeners\NotifyMaterialPosted;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -16,6 +24,18 @@ class EventServiceProvider extends ServiceProvider
     protected $listen = [
         Registered::class => [
             SendEmailVerificationNotification::class,
+        ],
+        CourseEnrolled::class => [
+            CreateCourseEnrolledNotification::class,
+        ],
+        AssignmentPosted::class => [
+            NotifyAssignmentPosted::class,
+        ],
+        QuizPosted::class => [
+            NotifyQuizPosted::class,
+        ],
+        MaterialPosted::class => [
+            NotifyMaterialPosted::class,
         ],
     ];
 

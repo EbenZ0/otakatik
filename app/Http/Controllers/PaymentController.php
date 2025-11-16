@@ -6,6 +6,7 @@ use App\Models\Course;
 use App\Models\Payment;
 use App\Models\CourseRegistration;
 use App\Services\MidtransService;
+use App\Events\CourseEnrolled;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -20,8 +21,30 @@ class PaymentController extends Controller
     }
 
     /**
- * Process payment
- */
+     * Show checkout page
+     */
+    public function checkout($courseId)
+    {
+        $course = Course::where('is_active', true)->findOrFail($courseId);
+        $user = Auth::user();
+        
+        // Check if already enrolled
+        $existingEnrollment = CourseRegistration::where('user_id', $user->id)
+            ->where('course_id', $courseId)
+            ->where('status', 'paid')
+            ->exists();
+        
+        if ($existingEnrollment) {
+            return redirect()->route('purchase.history')
+                ->with('info', 'You are already enrolled in this course.');
+        }
+        
+        return view('checkout', ['course' => $course]);
+    }
+
+    /**
+     * Process payment
+     */
 public function processPayment(Request $request, $courseId)
 {
     $request->validate([
@@ -220,6 +243,9 @@ public function processPayment(Request $request, $courseId)
 
             // Update course enrollment count
             $registration->course->increment('current_enrollment');
+
+            // Dispatch event to create notification
+            CourseEnrolled::dispatch($registration);
         });
     }
 

@@ -13,12 +13,12 @@ class DatabaseSeeder extends Seeder
 
     public function run(): void
     {
-        // Hanya buat user dasar saja
+        // Buat admin user
         $admin = User::firstOrCreate(
             ['email' => 'admin@otakatik.com'],
             [
                 'name' => 'Admin User',
-                'password' => Hash::make('password'),
+                'password' => Hash::make('12345678'),
                 'is_admin' => true,
                 'is_instructor' => false,
                 'age_range' => '35-44',
@@ -32,11 +32,12 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
+        // Buat instructor user
         $instructor = User::firstOrCreate(
             ['email' => 'instructor@otakatik.com'],
             [
                 'name' => 'John Instructor',
-                'password' => Hash::make('password'),
+                'password' => Hash::make('12345678'),
                 'is_admin' => false,
                 'is_instructor' => true,
                 'age_range' => '35-44',
@@ -50,30 +51,17 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        $user = User::firstOrCreate(
-            ['email' => 'user@example.com'],
-            [
-                'name' => 'Test User',
-                'password' => Hash::make('password'),
-                'is_admin' => false,
-                'is_instructor' => false,
-                'age_range' => '25-34',
-                'education_level' => 'Bachelor',
-                'location' => 'Jakarta',
-                'phone' => '+62 833-4455-6677',
-                'date_of_birth' => '1995-03-10',
-                'bio' => 'Regular user for testing.',
-                'expertise' => 'Student',
-                'email_verified_at' => now(),
-            ]
-        );
-
-        $this->command->info('Seeder berhasil!');
-        $this->command->info('Admin: admin@otakatik.com / password');
-        $this->command->info('Instructor: instructor@otakatik.com / password');
-        $this->command->info('User: user@example.com / password');
+        $this->command->info('✅ Seeder berhasil!');
+        $this->command->info('');
+        $this->command->info('📧 Admin:');
+        $this->command->info('   Email: admin@otakatik.com');
+        $this->command->info('   Password: 12345678');
+        $this->command->info('');
+        $this->command->info('👨‍🏫 Instructor:');
+        $this->command->info('   Email: instructor@otakatik.com');
+        $this->command->info('   Password: 12345678');
+        $this->command->info('');
         $this->command->info('---');
-        $this->command->info('SEMUA COURSE DIBUAT MANUAL OLEH ADMIN!');
-        $this->command->info('Login sebagai admin dan buat course pertama Anda.');
+        $this->command->info('Siap untuk login! 🚀');
     }
 }

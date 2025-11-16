@@ -27,7 +27,14 @@ class Course extends Model
         'max_quota',
         'current_enrollment',
         'is_active',
-        'image_url'
+        'image_url',
+        'duration_days',
+        'start_date',
+        'end_date',
+        'is_rescheduled',
+        'rescheduled_start_date',
+        'reschedule_reason',
+        'quota_not_met'
     ];
 
     protected $casts = [
@@ -36,7 +43,13 @@ class Course extends Model
         'min_quota' => 'integer',
         'max_quota' => 'integer',
         'current_enrollment' => 'integer',
-        'is_active' => 'boolean'
+        'is_active' => 'boolean',
+        'duration_days' => 'integer',
+        'start_date' => 'date',
+        'end_date' => 'date',
+        'is_rescheduled' => 'boolean',
+        'rescheduled_start_date' => 'date',
+        'quota_not_met' => 'boolean'
     ];
 
     protected $appends = [

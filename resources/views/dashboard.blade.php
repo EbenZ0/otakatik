@@ -20,41 +20,33 @@
 </head>
 <body class="bg-gray-50">
     
-    <!-- Navbar -->
-    <nav class="bg-white shadow-md fixed w-full top-0 z-50">
-        <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-            <!-- Logo -->
-            <div class="flex items-center gap-2">
-                <div class="w-8 h-8 bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg flex items-center justify-center">
-                    <span class="text-white font-bold text-lg">O</span>
+    @auth
+        @include('components.navbar')
+    @else
+        <!-- Navbar untuk guest -->
+        <nav class="bg-white shadow-md fixed w-full top-0 z-50">
+            <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+                <!-- Logo -->
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg flex items-center justify-center">
+                        <span class="text-white font-bold text-lg">O</span>
+                    </div>
+                    <span class="text-xl font-bold text-gray-800">OtakAtik</span>
                 </div>
-                <span class="text-xl font-bold text-gray-800">OtakAtik</span>
-            </div>
-            
-            <!-- Menu -->
-            <div class="hidden md:flex items-center gap-8">
-                <a href="#about" class="text-gray-700 hover:text-orange-500 font-medium transition">About Us</a>
-                <a href="/course" class="text-gray-700 hover:text-orange-500 font-medium transition">Our Course</a>
-            </div>
-            
-            <!-- Sign In / Logout Button -->
-            @auth
-                <div class="flex items-center gap-4">
-                    <span class="text-gray-700 font-medium">Hi, {{ Auth::user()->name }}!</span>
-                    <form action="/logout" method="POST">
-                        @csrf
-                        <button type="submit" class="bg-red-500 hover:bg-red-600 text-white font-bold px-6 py-2.5 rounded-lg transition-all hover:scale-105 shadow-lg">
-                            Logout
-                        </button>
-                    </form>
+                
+                <!-- Menu -->
+                <div class="hidden md:flex items-center gap-8">
+                    <a href="#about" class="text-gray-700 hover:text-orange-500 font-medium transition">About Us</a>
+                    <a href="/course" class="text-gray-700 hover:text-orange-500 font-medium transition">Our Course</a>
                 </div>
-            @else
+                
+                <!-- Sign In Button -->
                 <a href="/login" class="bg-orange-500 hover:bg-orange-600 text-white font-bold px-6 py-2.5 rounded-lg transition-all hover:scale-105 shadow-lg">
                     Sign In
                 </a>
-            @endauth
-        </div>
-    </nav>
+            </div>
+        </nav>
+    @endauth
 
     <!-- Hero Section -->
     <section class="pt-32 pb-20 px-6 bg-gradient-to-b from-white to-gray-50">

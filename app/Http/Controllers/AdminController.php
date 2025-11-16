@@ -437,6 +437,9 @@ class AdminController extends Controller
             'discount_code' => 'nullable|string|max:50',
             'min_quota' => 'required|integer|min:1',
             'max_quota' => 'required|integer|min:1',
+            'duration_days' => 'required|integer|min:1|max:365',
+            'start_date' => 'nullable|date|after_or_equal:today',
+            'end_date' => 'nullable|date|after:start_date',
             'is_active' => 'boolean'
         ]);
 
@@ -449,6 +452,9 @@ class AdminController extends Controller
             'discount_code' => $validated['discount_code'] ?? null,
             'min_quota' => (int)$validated['min_quota'],
             'max_quota' => (int)$validated['max_quota'],
+            'duration_days' => (int)$validated['duration_days'],
+            'start_date' => $validated['start_date'] ?? null,
+            'end_date' => $validated['end_date'] ?? null,
             'current_enrollment' => 0,
             'is_active' => $validated['is_active'] ?? true,
         ];
@@ -498,6 +504,9 @@ class AdminController extends Controller
             'discount_code' => 'nullable|string|max:50',
             'min_quota' => 'required|integer|min:1',
             'max_quota' => 'required|integer|min:1',
+            'duration_days' => 'required|integer|min:1|max:365',
+            'start_date' => 'nullable|date|after_or_equal:today',
+            'end_date' => 'nullable|date|after:start_date',
             'is_active' => 'boolean'
         ]);
 

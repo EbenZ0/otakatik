@@ -10,6 +10,8 @@ use App\Models\CourseAssignment;
 use App\Models\CourseRegistration;
 use App\Models\AssignmentSubmission;
 use Illuminate\Support\Facades\Storage;
+use App\Events\AssignmentPosted;
+use App\Events\MaterialPosted;
 
 class InstructorController extends Controller
 {
@@ -153,6 +155,9 @@ class InstructorController extends Controller
                 'is_published' => true,
             ]);
 
+            // Dispatch event to notify students
+            MaterialPosted::dispatch($material);
+
             return back()->with('success', 'Material berhasil diupload!');
         }
 
@@ -206,7 +211,6 @@ class InstructorController extends Controller
             'description' => 'nullable|string',
             'instructions' => 'required|string',
             'due_date' => 'required|date|after:now',
-            'max_points' => 'required|integer|min:1|max:1000',
         ]);
 
         $assignment = CourseAssignment::create([
@@ -215,9 +219,11 @@ class InstructorController extends Controller
             'description' => $request->description,
             'instructions' => $request->instructions,
             'due_date' => $request->due_date,
-            'max_points' => $request->max_points,
             'is_published' => true,
         ]);
+
+        // Dispatch event to notify students
+        AssignmentPosted::dispatch($assignment);
 
         return back()->with('success', 'Assignment berhasil dibuat!');
     }
@@ -243,7 +249,6 @@ class InstructorController extends Controller
             'description' => 'nullable|string',
             'instructions' => 'required|string',
             'due_date' => 'required|date|after:now',
-            'max_points' => 'required|integer|min:1|max:1000',
             'is_published' => 'required|boolean',
         ]);
 
@@ -252,7 +257,6 @@ class InstructorController extends Controller
             'description' => $request->description,
             'instructions' => $request->instructions,
             'due_date' => $request->due_date,
-            'max_points' => $request->max_points,
             'is_published' => $request->is_published,
         ]);
 

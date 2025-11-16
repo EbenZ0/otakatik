@@ -90,6 +90,32 @@
                             </div>
                         </div>
 
+                        <!-- Duration & Schedule -->
+                        <div class="grid grid-cols-3 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Durasi (Hari)</label>
+                                <input type="number" name="duration_days" value="{{ $course->duration_days }}" min="1"
+                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Tanggal Mulai</label>
+                                <input type="date" name="start_date" value="{{ $course->start_date?->format('Y-m-d') }}"
+                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Tanggal Selesai</label>
+                                <input type="date" name="end_date" value="{{ $course->end_date?->format('Y-m-d') }}"
+                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            </div>
+                        </div>
+
+                        <!-- Reschedule Info -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Reschedule (Jika ada perubahan jadwal)</label>
+                            <textarea name="reschedule_reason" placeholder="Alasan perubahan jadwal (optional)" rows="2"
+                                      class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">{{ $course->reschedule_reason }}</textarea>
+                        </div>
+
                         <!-- Active Status -->
                         <div class="flex items-center gap-3 p-4 bg-gray-50 rounded-lg">
                             <input type="checkbox" name="is_active" id="is_active" value="1" 

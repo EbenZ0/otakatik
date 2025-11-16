@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\CourseRegistration;
 use App\Models\Course;
 use App\Models\Refund;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class StudentController extends Controller
@@ -72,7 +73,7 @@ class StudentController extends Controller
         return view('student.profile', compact('user'));
     }
 
-    public function updateProfile($request)
+    public function updateProfile(Request $request)
     {
         $user = Auth::user();
         
@@ -80,14 +81,19 @@ class StudentController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $user->id,
             'phone' => 'nullable|string|max:20',
-            'address' => 'nullable|string',
-            'city' => 'nullable|string',
-            'province' => 'nullable|string',
-            'postal_code' => 'nullable|string',
-            'profile_picture' => 'nullable|image|max:2048',
+            'location' => 'nullable|string|max:255',
+            'date_of_birth' => 'nullable|date|before:today',
+            'education_level' => 'nullable|string|in:High School,Bachelor,Master,Doctorate,Other',
+            'education_name' => 'nullable|string|max:255',
+            'bio' => 'nullable|string|max:1000',
+            'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
         if ($request->hasFile('profile_picture')) {
+            // Delete old picture if exists
+            if ($user->profile_picture) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($user->profile_picture);
+            }
             $path = $request->file('profile_picture')->store('profiles', 'public');
             $validated['profile_picture'] = $path;
         }
@@ -95,5 +101,108 @@ class StudentController extends Controller
         $user->update($validated);
 
         return back()->with('success', 'Profil berhasil diperbarui!');
+    }
+
+    /**
+     * Show assignment submit form
+     */
+    public function submitAssignmentForm($assignmentId)
+    {
+        $assignment = \App\Models\CourseAssignment::findOrFail($assignmentId);
+        $course = $assignment->course;
+
+        // Check if student is enrolled in this course
+        $registration = CourseRegistration::where('user_id', Auth::id())
+            ->where('course_id', $course->id)
+            ->where('status', 'paid')
+            ->firstOrFail();
+
+        // Check if already submitted
+        $existingSubmission = \App\Models\AssignmentSubmission::where('user_id', Auth::id())
+            ->where('assignment_id', $assignmentId)
+            ->first();
+
+        return view('student.assignment-submit', compact('assignment', 'course', 'existingSubmission', 'registration'));
+    }
+
+    /**
+     * Store assignment submission
+     */
+    public function submitAssignment(Request $request, $assignmentId)
+    {
+        $assignment = \App\Models\CourseAssignment::findOrFail($assignmentId);
+        $course = $assignment->course;
+
+        // Check if student is enrolled
+        $registration = CourseRegistration::where('user_id', Auth::id())
+            ->where('course_id', $course->id)
+            ->where('status', 'paid')
+            ->firstOrFail();
+
+        // Validate submission
+        $validated = $request->validate([
+            'submission_text' => 'nullable|string|max:5000',
+            'submission_file' => 'nullable|file|mimes:pdf,doc,docx,txt,xls,xlsx,ppt,pptx,jpg,jpeg,png|max:10240',
+        ]);
+
+        // At least one of text or file must be provided
+        if (empty($validated['submission_text']) && !$request->hasFile('submission_file')) {
+            return back()->withErrors(['submission' => 'Silakan upload file atau tulis jawaban Anda.'])->withInput();
+        }
+
+        // Check if already submitted
+        $existingSubmission = \App\Models\AssignmentSubmission::where('user_id', Auth::id())
+            ->where('assignment_id', $assignmentId)
+            ->first();
+
+        if ($existingSubmission && $request->input('action') !== 'resubmit') {
+            return back()->withErrors(['submission' => 'Anda sudah submit tugas ini sebelumnya. Hubungi instruktur untuk resubmit.']);
+        }
+
+        // Handle file upload
+        $filePath = null;
+        if ($request->hasFile('submission_file')) {
+            $file = $request->file('submission_file');
+            $fileName = Auth::id() . '_' . $assignmentId . '_' . time() . '.' . $file->getClientOriginalExtension();
+            $filePath = $file->storeAs('assignments', $fileName, 'public');
+        }
+
+        // Create or update submission
+        if ($existingSubmission && $request->input('action') === 'resubmit') {
+            // Delete old file if exists
+            if ($existingSubmission->file_path) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($existingSubmission->file_path);
+            }
+
+            $existingSubmission->update([
+                'submission_text' => $validated['submission_text'],
+                'file_path' => $filePath ?? $existingSubmission->file_path,
+                'submitted_at' => now(),
+            ]);
+        } else {
+            \App\Models\AssignmentSubmission::create([
+                'user_id' => Auth::id(),
+                'assignment_id' => $assignmentId,
+                'submission_text' => $validated['submission_text'],
+                'file_path' => $filePath,
+                'submitted_at' => now(),
+            ]);
+        }
+
+        return redirect()->route('student.course-detail', $registration->id)
+            ->with('success', 'Tugas berhasil disubmit! Instruktur akan me-review dan memberikan nilai.');
+    }
+
+    /**
+     * View submitted assignment
+     */
+    public function viewSubmission($assignmentId)
+    {
+        $assignment = \App\Models\CourseAssignment::findOrFail($assignmentId);
+        $submission = \App\Models\AssignmentSubmission::where('user_id', Auth::id())
+            ->where('assignment_id', $assignmentId)
+            ->firstOrFail();
+
+        return view('student.assignment-view', compact('assignment', 'submission'));
     }
 }
