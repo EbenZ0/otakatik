@@ -12,7 +12,7 @@
                     ← Kembali
                 </a>
             </div>
-            <h1 class="text-3xl font-bold mb-2">📝 {{ $course->title }}</h1>
+            <h1 class="text-3xl font-bold mb-2">{{ $course->title }}</h1>
             <p class="text-blue-100">Daftar Quiz Tersedia</p>
         </div>
     </div>
@@ -34,11 +34,11 @@
                         @endphp
                         @if($submission)
                             <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-semibold">
-                                ✓ Sudah Dikerjakan
+                                Sudah Dikerjakan
                             </span>
                         @else
                             <span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-xs font-semibold">
-                                ⏳ Belum Dikerjakan
+                                Belum Dikerjakan
                             </span>
                         @endif
                     </div>
@@ -51,15 +51,15 @@
                     <!-- Quiz Settings -->
                     <div class="bg-gray-50 rounded-lg p-3 mb-4 text-sm text-gray-700 space-y-1">
                         <div class="flex justify-between">
-                            <span>⏱️ Waktu:</span>
+                            <span>Waktu:</span>
                             <strong>{{ $quiz->time_limit }} menit</strong>
                         </div>
                         <div class="flex justify-between">
-                            <span>📊 Skor Kelulusan:</span>
+                            <span>Skor Kelulusan:</span>
                             <strong>{{ $quiz->pass_score }}%</strong>
                         </div>
                         <div class="flex justify-between">
-                            <span>🔄 Percobaan:</span>
+                            <span>Percobaan:</span>
                             <strong>{{ $quiz->attempts_allowed }}x</strong>
                         </div>
                     </div>
@@ -73,12 +73,12 @@
                         </div>
                         @if($submission->score)
                             @if($submission->score >= $quiz->pass_score)
-                                <p class="text-green-700 font-semibold">✓ LULUS</p>
+                                <p class="text-green-700 font-semibold">LULUS</p>
                             @else
-                                <p class="text-red-700 font-semibold">✗ TIDAK LULUS</p>
+                                <p class="text-red-700 font-semibold">TIDAK LULUS</p>
                             @endif
                         @else
-                            <p class="text-yellow-700">⏳ Sedang Dinilai</p>
+                            <p class="text-yellow-700">Sedang Dinilai</p>
                         @endif
                         <p class="text-gray-600 text-xs mt-2">
                             {{ $submission->submitted_at->format('d M Y H:i') }}
@@ -91,7 +91,7 @@
                         @if($submission)
                             <a href="{{ route('student.quiz.result', $submission->id) }}" 
                                class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg text-center transition">
-                                👁️ Lihat Hasil
+                                Lihat Hasil
                             </a>
                             @if($quiz->submissions()->where('user_id', auth()->id())->count() < $quiz->attempts_allowed)
                             <a href="{{ route('student.quiz.start', $quiz->id) }}" 
@@ -102,7 +102,7 @@
                         @else
                             <a href="{{ route('student.quiz.start', $quiz->id) }}" 
                                class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg text-center transition">
-                                ▶️ Mulai Quiz
+                                Mulai Quiz
                             </a>
                         @endif
                     </div>
@@ -111,7 +111,7 @@
             </div>
         @else
             <div class="bg-gray-50 rounded-lg border border-gray-200 p-12 text-center">
-                <p class="text-3xl mb-4">📋</p>
+                <p class="text-3xl mb-4"></p>
                 <p class="text-gray-600 text-lg">Belum ada quiz untuk course ini</p>
                 <p class="text-gray-500 text-sm mt-2">Instruktur akan menambahkan quiz segera</p>
             </div>

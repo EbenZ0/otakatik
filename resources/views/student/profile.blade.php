@@ -12,7 +12,7 @@
                     ← Kembali
                 </a>
             </div>
-            <h1 class="text-3xl font-bold mb-2">👤 Profil Saya</h1>
+            <h1 class="text-3xl font-bold mb-2">Profil Saya</h1>
             <p class="text-purple-100">Kelola informasi pribadi dan preferensi Anda</p>
         </div>
     </div>
@@ -48,11 +48,11 @@
                                 <span class="font-bold text-purple-600">{{ $user->courseRegistrations()->count() }}</span>
                             </div>
                             <div class="flex items-center justify-between">
-                                <span class="text-sm text-gray-600">✅ Selesai</span>
+                                <span class="text-sm text-gray-600">Selesai</span>
                                 <span class="font-bold text-green-600">{{ $user->courseRegistrations()->where('status', 'completed')->count() }}</span>
                             </div>
                             <div class="flex items-center justify-between">
-                                <span class="text-sm text-gray-600">📝 Assignments</span>
+                                <span class="text-sm text-gray-600">Assignments</span>
                                 <span class="font-bold text-blue-600">{{ $user->assignmentSubmissions()->count() }}</span>
                             </div>
                         </div>
@@ -67,7 +67,7 @@
 
                     @if ($errors->any())
                         <div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
-                            <p class="text-red-800 font-semibold mb-2">❌ Terjadi Kesalahan:</p>
+                            <p class="text-red-800 font-semibold mb-2">Terjadi Kesalahan:</p>
                             <ul class="text-sm text-red-700 space-y-1">
                                 @foreach ($errors->all() as $error)
                                     <li>• {{ $error }}</li>
@@ -78,7 +78,7 @@
 
                     @if (session('success'))
                         <div class="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
-                            <p class="text-green-800">✓ {{ session('success') }}</p>
+                            <p class="text-green-800">{{ session('success') }}</p>
                         </div>
                     @endif
 
@@ -211,11 +211,11 @@
                         <div class="flex gap-4 pt-4">
                             <button type="submit" 
                                     class="flex-1 bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-6 rounded-lg transition">
-                                ✓ Simpan Perubahan
+                                Simpan Perubahan
                             </button>
                             <a href="{{ route('student.dashboard') }}" 
                                class="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition font-medium">
-                                ✕ Batal
+                                Batal
                             </a>
                         </div>
                     </form>
@@ -265,7 +265,7 @@
 
     function updateFileName(files) {
         if (files.length > 0) {
-            fileName.textContent = `✓ File dipilih: ${files[0].name}`;
+            fileName.textContent = `File dipilih: ${files[0].name}`;
             fileName.classList.remove('text-red-600');
             fileName.classList.add('text-green-600');
         }

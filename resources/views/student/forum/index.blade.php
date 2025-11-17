@@ -61,7 +61,7 @@
                     </a>
                     @empty
                     <div class="bg-gray-50 rounded-lg border border-gray-200 p-12 text-center">
-                        <p class="text-3xl mb-4">💬</p>
+                        <p class="text-3xl mb-4"></p>
                         <p class="text-gray-600 text-lg">Belum ada diskusi</p>
                         <p class="text-gray-500 text-sm mt-2">Mulai diskusi dengan membuat topik baru</p>
                     </div>
@@ -74,7 +74,7 @@
                 <div class="sticky top-6">
                     <!-- Forum Info -->
                     <div class="bg-green-50 rounded-lg border border-green-200 p-4 mb-4">
-                        <h4 class="font-semibold text-green-900 mb-3">📊 Statistik Forum</h4>
+                        <h4 class="font-semibold text-green-900 mb-3">Statistik Forum</h4>
                         <div class="text-sm text-green-800 space-y-2">
                             <div class="flex justify-between">
                                 <span>Total Topik:</span>
@@ -93,12 +93,12 @@
 
                     <!-- Rules -->
                     <div class="bg-blue-50 rounded-lg border border-blue-200 p-4">
-                        <h4 class="font-semibold text-blue-900 mb-3">📋 Peraturan Forum</h4>
+                        <h4 class="font-semibold text-blue-900 mb-3">Peraturan Forum</h4>
                         <ul class="text-xs text-blue-800 space-y-2">
-                            <li>✓ Hormati semua anggota</li>
-                            <li>✓ Tulis pertanyaan dengan jelas</li>
-                            <li>✓ Gunakan bahasa yang sopan</li>
-                            <li>✓ Hindari spam & iklan</li>
+                            <li>Hormati semua anggota</li>
+                            <li>Tulis pertanyaan dengan jelas</li>
+                            <li>Gunakan bahasa yang sopan</li>
+                            <li>Hindari spam & iklan</li>
                         </ul>
                     </div>
                 </div>

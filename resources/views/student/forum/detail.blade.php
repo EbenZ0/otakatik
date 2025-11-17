@@ -12,7 +12,7 @@
                     ← Kembali
                 </a>
             </div>
-            <h1 class="text-3xl font-bold mb-2">💬 {{ $thread->title }}</h1>
+            <h1 class="text-3xl font-bold mb-2">{{ $thread->title }}</h1>
             <p class="text-green-100">by {{ $thread->user->name }} • {{ $thread->created_at->format('d M Y H:i') }}</p>
         </div>
     </div>
@@ -44,14 +44,14 @@
             <div class="flex gap-2 pt-4 border-t border-gray-200">
                 <a href="{{ route('student.forum.edit', $thread->id) }}" 
                    class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm transition">
-                    ✏️ Edit
+                    Edit
                 </a>
                 <form action="{{ route('student.forum.delete', $thread->id) }}" method="POST" 
                       class="inline" onsubmit="return confirm('Hapus topik ini?')">
                     @csrf
                     @method('DELETE')
                     <button type="submit" class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm transition">
-                        🗑️ Hapus
+                        Hapus
                     </button>
                 </form>
             </div>
@@ -61,7 +61,7 @@
         <!-- Replies Section -->
         <div class="mb-8">
             <h3 class="text-xl font-semibold text-gray-800 mb-4">
-                💬 {{ $thread->replies()->count() }} Balasan
+                {{ $thread->replies()->count() }} Balasan
             </h3>
 
             <div class="space-y-4">
@@ -88,14 +88,14 @@
                     <div class="flex gap-2 mt-3 pt-3 border-t border-gray-300">
                         <button type="button" onclick="editReply({{ $reply->id }})" 
                                 class="bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 rounded text-xs transition">
-                            ✏️ Edit
+                            Edit
                         </button>
                         <form action="{{ route('student.forum.delete-reply', $reply->id) }}" method="POST" 
                               class="inline" onsubmit="return confirm('Hapus balasan ini?')">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="bg-red-600 hover:bg-red-700 text-white px-2 py-1 rounded text-xs transition">
-                                🗑️ Hapus
+                                Hapus
                             </button>
                         </form>
                     </div>

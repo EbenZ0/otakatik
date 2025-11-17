@@ -99,6 +99,13 @@ Route::middleware(['auth', 'instructor'])->prefix('instructor')->name('instructo
     Route::put('/submissions/{id}/grade', [InstructorController::class, 'gradeSubmission'])->name('submissions.grade');
     Route::put('/students/{id}/progress', [InstructorController::class, 'updateStudentProgress'])->name('students.progress');
     
+    // Forum Routes (Instructor)
+    Route::prefix('courses/{courseId}/forum')->name('forum.')->group(function () {
+        Route::post('/', [InstructorController::class, 'storeForum'])->name('store');
+        Route::get('/{forumId}', [InstructorController::class, 'showForum'])->name('show');
+        Route::delete('/{forumId}', [InstructorController::class, 'deleteForum'])->name('destroy');
+    });
+    
     // Quiz Routes (Instructor)
     Route::prefix('courses/{courseId}/quiz')->name('quiz.')->group(function () {
         Route::get('/', [QuizController::class, 'index'])->name('index');

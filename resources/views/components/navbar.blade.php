@@ -30,7 +30,7 @@
                 @endphp
                 
                 <button id="notificationBtn" class="relative text-gray-600 hover:text-orange-500 transition text-xl">
-                    <i class="fas fa-bell"></i>
+                    
                     <!-- Notification Badge -->
                     @if($unreadCount > 0)
                     <span class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
@@ -50,15 +50,15 @@
                                 <div class="flex items-start gap-3">
                                     <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
                                         @if($notification->type === 'course_purchased')
-                                            <i class="fas fa-book text-blue-600"></i>
+                                            <div></div>
                                         @elseif($notification->type === 'assignment_posted')
-                                            <i class="fas fa-tasks text-purple-600"></i>
+                                            <div></div>
                                         @elseif($notification->type === 'quiz_posted')
-                                            <i class="fas fa-file-alt text-green-600"></i>
+                                            <div></div>
                                         @elseif($notification->type === 'material_posted')
-                                            <i class="fas fa-file-pdf text-red-600"></i>
+                                            <div></div>
                                         @else
-                                            <i class="fas fa-bell text-blue-600"></i>
+                                            <div></div>
                                         @endif
                                     </div>
                                     <div class="flex-1">
@@ -100,23 +100,18 @@
                     <!-- Menu Items -->
                     <div class="py-2">
                         <a href="/profile" class="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-gray-50 transition">
-                            <i class="fas fa-user w-4"></i>
                             <span>My Profile</span>
                         </a>
                         <a href="/purchase-history" class="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-gray-50 transition">
-                            <i class="fas fa-history w-4"></i>
                             <span>Purchase History</span>
                         </a>
                         <a href="/settings" class="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-gray-50 transition">
-                            <i class="fas fa-cog w-4"></i>
                             <span>Settings</span>
                         </a>
                         <a href="/achievements" class="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-gray-50 transition">
-                            <i class="fas fa-trophy w-4"></i>
                             <span>Achievements</span>
                         </a>
                         <a href="/help" class="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-gray-50 transition">
-                            <i class="fas fa-question-circle w-4"></i>
                             <span>Help Center</span>
                         </a>
                     </div>
@@ -126,7 +121,6 @@
                         <form action="/logout" method="POST" class="block">
                             @csrf
                             <button type="submit" class="w-full flex items-center gap-3 px-4 py-2 text-red-600 hover:bg-red-50 transition">
-                                <i class="fas fa-sign-out-alt w-4"></i>
                                 <span>Logout</span>
                             </button>
                         </form>

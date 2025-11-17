@@ -362,6 +362,21 @@ class Course extends Model
             ->first();
     }
 
+    /**
+     * Get quizzes for this course
+     */
+    public function quizzes()
+    {
+        return $this->hasMany(Quiz::class);
+    }
+
+    /**
+     * Get forum topics for this course
+     */
+    public function forums()
+    {
+        return $this->hasMany(CourseForum::class)->orderBy('created_at', 'desc');
+    }
 
     // Add this method to the Course model
 public function getCheckoutUrlAttribute()

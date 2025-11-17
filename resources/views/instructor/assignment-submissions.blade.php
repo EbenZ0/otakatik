@@ -8,7 +8,7 @@
     <div class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-8">
         <div class="max-w-6xl mx-auto">
             <div class="mb-4">
-                <a href="{{ route('instructor.course-detail', $course->id) }}" class="hover:opacity-80">
+                <a href="{{ route('instructor.courses.show', $course->id) }}" class="hover:opacity-80">
                     ← Kembali
                 </a>
             </div>
@@ -86,11 +86,11 @@
                             <td class="px-6 py-4 text-center">
                                 @if($submission->score !== null)
                                     <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-semibold">
-                                        ✓ Dinilai
+                                        Dinilai
                                     </span>
                                 @else
                                     <span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-xs font-semibold">
-                                        ⏳ Pending
+                                        Pending
                                     </span>
                                 @endif
                             </td>
@@ -149,7 +149,7 @@
 
         <!-- Export/Print -->
         <div class="mt-6 flex gap-4">
-            <a href="{{ route('instructor.course-detail', $course->id) }}" 
+            <a href="{{ route('instructor.courses.show', $course->id) }}" 
                class="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition font-medium">
                 ← Kembali
             </a>

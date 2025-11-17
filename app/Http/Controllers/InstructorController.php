@@ -9,8 +9,10 @@ use App\Models\CourseMaterial;
 use App\Models\CourseAssignment;
 use App\Models\CourseRegistration;
 use App\Models\AssignmentSubmission;
+use App\Models\CourseForum;
 use Illuminate\Support\Facades\Storage;
 use App\Events\AssignmentPosted;
+use App\Events\AssignmentDeadlineChanged;
 use App\Events\MaterialPosted;
 
 class InstructorController extends Controller
@@ -80,7 +82,7 @@ class InstructorController extends Controller
             abort(403, 'Unauthorized access.');
         }
 
-        $course = Course::with(['materials', 'assignments', 'registrations.user'])->findOrFail($id);
+        $course = Course::with(['materials', 'assignments', 'quizzes', 'forums.user', 'registrations.user'])->findOrFail($id);
         
         // Check if instructor owns this course
         if ($course->instructor_id != Auth::id()) {
@@ -90,8 +92,10 @@ class InstructorController extends Controller
         $students = $course->registrations()->where('status', 'paid')->with('user')->get();
         $materials = $course->materials()->orderBy('order')->get();
         $assignments = $course->assignments()->latest()->get();
+        $quizzes = $course->quizzes()->latest()->get();
+        $forums = $course->forums()->with('user')->latest()->get();
 
-        return view('instructor.course-detail', compact('course', 'students', 'materials', 'assignments'));
+        return view('instructor.course-detail', compact('course', 'students', 'materials', 'assignments', 'quizzes', 'forums'));
     }
 
     /**
@@ -118,7 +122,7 @@ class InstructorController extends Controller
     /**
      * Store course material
      */
-    public function storeMaterial(Request $request, $id)
+        public function storeMaterial(Request $request, $id)
     {
         if (!Auth::check() || !Auth::user()->is_instructor) {
             abort(403, 'Unauthorized access.');
@@ -252,6 +256,10 @@ class InstructorController extends Controller
             'is_published' => 'required|boolean',
         ]);
 
+        // Store old deadline before updating
+        $oldDeadline = $assignment->due_date->copy();
+        $newDeadline = \Carbon\Carbon::parse($request->due_date);
+
         $assignment->update([
             'title' => $request->title,
             'description' => $request->description,
@@ -259,6 +267,11 @@ class InstructorController extends Controller
             'due_date' => $request->due_date,
             'is_published' => $request->is_published,
         ]);
+
+        // Dispatch event if deadline changed
+        if ($oldDeadline->notEqualTo($newDeadline)) {
+            AssignmentDeadlineChanged::dispatch($assignment, $oldDeadline, $newDeadline);
+        }
 
         return back()->with('success', 'Assignment berhasil diupdate!');
     }
@@ -363,5 +376,112 @@ class InstructorController extends Controller
         ]);
 
         return back()->with('success', 'Submission berhasil dinilai!');
+    }
+
+    /**
+     * Get assignment data as JSON (for AJAX requests)
+     */
+    public function getAssignmentJson($id)
+    {
+        if (!Auth::check() || !Auth::user()->is_instructor) {
+            abort(403, 'Unauthorized access.');
+        }
+
+        $assignment = CourseAssignment::with('course')->findOrFail($id);
+        
+        // Check if instructor owns this course
+        if ($assignment->course->instructor_id !== Auth::id()) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        return response()->json([
+            'id' => $assignment->id,
+            'title' => $assignment->title,
+            'description' => $assignment->description,
+            'instructions' => $assignment->instructions,
+            'due_date' => $assignment->due_date->format('Y-m-d\TH:i'),
+            'is_published' => $assignment->is_published,
+            'course_id' => $assignment->course_id,
+        ]);
+    }
+
+    /**
+     * Store forum topic (Instructor posts)
+     */
+    public function storeForum(Request $request, $courseId)
+    {
+        if (!Auth::check() || !Auth::user()->is_instructor) {
+            abort(403, 'Unauthorized access.');
+        }
+
+        $course = Course::findOrFail($courseId);
+        
+        // Check if instructor owns this course
+        if ($course->instructor_id !== Auth::id()) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $request->validate([
+            'subject' => 'required|string|max:255',
+            'message' => 'required|string',
+            'attachment' => 'nullable|file|max:10240', // 10MB max
+        ]);
+
+        $attachmentPath = null;
+        if ($request->hasFile('attachment')) {
+            $attachmentPath = $request->file('attachment')->store('forum-attachments', 'public');
+        }
+
+        CourseForum::create([
+            'course_id' => $course->id,
+            'user_id' => Auth::id(),
+            'subject' => $request->subject,
+            'message' => $request->message,
+            'image_path' => $attachmentPath, // Using existing field
+        ]);
+
+        return back()->with('success', 'Forum topic posted successfully!');
+    }
+
+    /**
+     * Show forum topic detail
+     */
+    public function showForum($courseId, $forumId)
+    {
+        if (!Auth::check() || !Auth::user()->is_instructor) {
+            abort(403, 'Unauthorized access.');
+        }
+
+        $course = Course::findOrFail($courseId);
+        $forum = CourseForum::with(['user', 'replies.user'])->findOrFail($forumId);
+
+        // Check if instructor owns this course
+        if ($course->instructor_id !== Auth::id()) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        return view('instructor.forum.show', compact('course', 'forum'));
+    }
+
+    /**
+     * Delete forum topic
+     */
+    public function deleteForum($courseId, $forumId)
+    {
+        if (!Auth::check() || !Auth::user()->is_instructor) {
+            abort(403, 'Unauthorized access.');
+        }
+
+        $course = Course::findOrFail($courseId);
+        $forum = CourseForum::findOrFail($forumId);
+
+        // Check if instructor owns this course
+        if ($course->instructor_id !== Auth::id()) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $forum->delete();
+
+        return back()->with('success', 'Forum topic deleted successfully!');
     }
 }

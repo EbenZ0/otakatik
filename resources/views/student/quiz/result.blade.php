@@ -12,7 +12,7 @@
                     ← Kembali
                 </a>
             </div>
-            <h1 class="text-3xl font-bold mb-2">📊 Hasil Quiz</h1>
+            <h1 class="text-3xl font-bold mb-2">Hasil Quiz</h1>
             <p class="text-blue-100">{{ $quiz->title }}</p>
         </div>
     </div>
@@ -31,18 +31,18 @@
                         
                         @if($submission->score >= $quiz->pass_score)
                             <div class="mt-4 bg-green-100 text-green-800 rounded-lg py-2 font-bold">
-                                ✓ LULUS
+                                LULUS
                             </div>
                         @else
                             <div class="mt-4 bg-red-100 text-red-800 rounded-lg py-2 font-bold">
-                                ✗ TIDAK LULUS
+                                TIDAK LULUS
                             </div>
                         @endif
                     </div>
 
                     <!-- Quiz Info -->
                     <div class="bg-gray-50 rounded-lg border border-gray-200 p-4">
-                        <h4 class="font-semibold text-gray-800 mb-3">📋 Informasi Quiz</h4>
+                        <h4 class="font-semibold text-gray-800 mb-3">Informasi Quiz</h4>
                         <div class="text-sm text-gray-700 space-y-2">
                             <div class="flex justify-between">
                                 <span>Total Soal:</span>
@@ -65,7 +65,7 @@
 
                     <!-- Timing -->
                     <div class="bg-purple-50 rounded-lg border border-purple-200 p-4">
-                        <h4 class="font-semibold text-purple-800 mb-3">⏱️ Waktu</h4>
+                        <h4 class="font-semibold text-purple-800 mb-3">Waktu</h4>
                         <div class="text-sm text-purple-700 space-y-2">
                             <div>
                                 <p class="text-xs">Mulai:</p>
@@ -125,9 +125,9 @@
                                 @if($question->question_type === 'essay')
                                     <span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded text-xs font-semibold">Essay</span>
                                 @elseif($isCorrect)
-                                    <span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs font-semibold">✓ Benar</span>
+                                    <span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs font-semibold">Benar</span>
                                 @else
-                                    <span class="bg-red-100 text-red-800 px-2 py-1 rounded text-xs font-semibold">✗ Salah</span>
+                                    <span class="bg-red-100 text-red-800 px-2 py-1 rounded text-xs font-semibold">Salah</span>
                                 @endif
                             </div>
 
@@ -152,13 +152,13 @@
                                 <div class="bg-white rounded p-3 text-sm">
                                     <p class="text-gray-700 mb-2"><strong>Jawaban Anda:</strong></p>
                                     <p class="text-gray-800 mb-2">
-                                        {{ $userAnswer === 'true' ? '✓ Benar' : ($userAnswer === 'false' ? '✗ Salah' : 'Tidak dijawab') }}
+                                        {{ $userAnswer === 'true' ? 'Benar' : ($userAnswer === 'false' ? 'Salah' : 'Tidak dijawab') }}
                                     </p>
                                     
                                     @if(!$isCorrect)
                                         <p class="text-green-700 mt-2"><strong>Jawaban Benar:</strong></p>
                                         <p class="text-green-800">
-                                            {{ $question->correct_answer === 'true' ? '✓ Benar' : '✗ Salah' }}
+                                            {{ $question->correct_answer === 'true' ? 'Benar' : 'Salah' }}
                                         </p>
                                     @endif
                                 </div>

@@ -12,7 +12,7 @@
                     ← Kembali
                 </a>
             </div>
-            <h1 class="text-3xl font-bold mb-2">{{ isset($thread) ? '✏️ Edit Topik' : '💬 Buat Topik Baru' }}</h1>
+            <h1 class="text-3xl font-bold mb-2">{{ isset($thread) ? 'Edit Topik' : 'Buat Topik Baru' }}</h1>
             <p class="text-green-100">{{ $course->title }}</p>
         </div>
     </div>
@@ -22,7 +22,7 @@
         <div class="bg-white rounded-lg border border-gray-200 p-6">
             @if ($errors->any())
                 <div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
-                    <p class="text-red-800 font-semibold mb-2">❌ Terjadi Kesalahan:</p>
+                    <p class="text-red-800 font-semibold mb-2">Terjadi Kesalahan:</p>
                     <ul class="text-sm text-red-700 space-y-1">
                         @foreach ($errors->all() as $error)
                             <li>• {{ $error }}</li>
@@ -54,18 +54,18 @@
                         <textarea name="content" required rows="8"
                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                                   placeholder="Jelaskan pertanyaan atau topik diskusi Anda secara detail...">{{ old('content', $thread->content ?? '') }}</textarea>
-                        <p class="text-xs text-gray-600 mt-2">💡 Semakin detail penjelasan Anda, semakin baik respons yang akan didapat</p>
+                        <p class="text-xs text-gray-600 mt-2">Semakin detail penjelasan Anda, semakin baik respons yang akan didapat</p>
                     </div>
 
                     <!-- Submit Buttons -->
                     <div class="flex gap-4 pt-4 border-t border-gray-200">
                         <button type="submit" 
                                 class="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg transition">
-                            ✓ {{ isset($thread) ? 'Update Topik' : 'Buat Topik' }}
+                            {{ isset($thread) ? 'Update Topik' : 'Buat Topik' }}
                         </button>
                         <a href="{{ route('student.forum.index', $registration->id) }}" 
                            class="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition font-medium">
-                            ✕ Batal
+                            Batal
                         </a>
                     </div>
                 </div>
@@ -74,13 +74,13 @@
 
         <!-- Tips -->
         <div class="mt-8 bg-blue-50 rounded-lg border border-blue-200 p-6">
-            <h3 class="font-semibold text-blue-900 mb-3">💡 Tips Membuat Topik Diskusi yang Baik</h3>
+            <h3 class="font-semibold text-blue-900 mb-3">Tips Membuat Topik Diskusi yang Baik</h3>
             <ul class="text-sm text-blue-800 space-y-2">
-                <li>✓ <strong>Judul jelas:</strong> Gunakan judul yang spesifik dan deskriptif</li>
-                <li>✓ <strong>Detail lengkap:</strong> Jelaskan masalah atau pertanyaan Anda dengan jelas</li>
-                <li>✓ <strong>Konteks:</strong> Berikan konteks tentang apa yang sudah Anda coba</li>
-                <li>✓ <strong>Sopan:</strong> Gunakan bahasa yang sopan dan menghormati</li>
-                <li>✓ <strong>Format:</strong> Gunakan paragraf untuk membuat mudah dibaca</li>
+                <li><strong>Judul jelas:</strong> Gunakan judul yang spesifik dan deskriptif</li>
+                <li><strong>Detail lengkap:</strong> Jelaskan masalah atau pertanyaan Anda dengan jelas</li>
+                <li><strong>Konteks:</strong> Berikan konteks tentang apa yang sudah Anda coba</li>
+                <li><strong>Sopan:</strong> Gunakan bahasa yang sopan dan menghormati</li>
+                <li><strong>Format:</strong> Gunakan paragraf untuk membuat mudah dibaca</li>
             </ul>
         </div>
     </div>

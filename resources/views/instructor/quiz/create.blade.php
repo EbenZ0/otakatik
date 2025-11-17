@@ -8,11 +8,11 @@
     <div class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-8">
         <div class="max-w-5xl mx-auto">
             <div class="mb-4">
-                <a href="{{ route('instructor.course-detail', $course->id) }}" class="hover:opacity-80">
+                <a href="{{ route('instructor.courses.show', $course->id) }}" class="hover:opacity-80">
                     ← Kembali
                 </a>
             </div>
-            <h1 class="text-3xl font-bold mb-2">{{ isset($quiz) ? '✏️ Edit Quiz' : '📝 Buat Quiz Baru' }}</h1>
+            <h1 class="text-3xl font-bold mb-2">{{ isset($quiz) ? 'Edit Quiz' : 'Buat Quiz Baru' }}</h1>
             <p class="text-indigo-100">{{ $course->title }}</p>
         </div>
     </div>
@@ -21,7 +21,7 @@
     <div class="max-w-5xl mx-auto px-6 py-8">
         @if ($errors->any())
             <div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
-                <p class="text-red-800 font-semibold mb-2">❌ Terjadi Kesalahan:</p>
+                <p class="text-red-800 font-semibold mb-2">Terjadi Kesalahan:</p>
                 <ul class="text-sm text-red-700 space-y-1">
                     @foreach ($errors->all() as $error)
                         <li>• {{ $error }}</li>
@@ -36,7 +36,7 @@
                 <div class="bg-white rounded-lg border border-gray-200 p-6 mb-6">
                     <h3 class="text-xl font-semibold text-gray-800 mb-6">Informasi Quiz</h3>
 
-                    <form action="{{ isset($quiz) ? route('instructor.quiz.update', $quiz->id) : route('instructor.quiz.store') }}" 
+                    <form action="{{ isset($quiz) ? route('instructor.quiz.update', [$course->id, $quiz->id]) : route('instructor.quiz.store', $course->id) }}" 
                           method="POST" id="quizForm">
                         @csrf
                         @if(isset($quiz))
@@ -115,11 +115,11 @@
                             <div class="flex gap-4 pt-4 border-t border-gray-200">
                                 <button type="submit" 
                                         class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-6 rounded-lg transition">
-                                    ✓ {{ isset($quiz) ? 'Update Quiz' : 'Buat Quiz' }}
+                                    {{ isset($quiz) ? 'Update Quiz' : 'Buat Quiz' }}
                                 </button>
-                                <a href="{{ route('instructor.course-detail', $course->id) }}" 
+                                <a href="{{ route('instructor.courses.show', $course->id) }}" 
                                    class="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition font-medium">
-                                    ✕ Batal
+                                    Batal
                                 </a>
                             </div>
                         </div>
@@ -152,14 +152,14 @@
                                 <div class="flex gap-2">
                                     <a href="{{ route('instructor.quiz.edit-question', $question->id) }}" 
                                        class="text-xs bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded transition">
-                                        ✏️ Edit
+                                        Edit
                                     </a>
                                     <form action="{{ route('instructor.quiz.delete-question', $question->id) }}" method="POST" 
                                           class="inline" onsubmit="return confirm('Hapus soal ini?')">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="text-xs bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded transition">
-                                            🗑️ Hapus
+                                            Hapus
                                         </button>
                                     </form>
                                 </div>

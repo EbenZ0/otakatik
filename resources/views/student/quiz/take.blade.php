@@ -15,7 +15,7 @@
                         <p class="text-gray-600">{{ $quiz->questions()->count() }} Soal</p>
                     </div>
                     <div class="text-right">
-                        <p class="text-sm text-gray-600 mb-1">⏱️ Sisa Waktu</p>
+                        <p class="text-sm text-gray-600 mb-1">Sisa Waktu</p>
                         <div id="timer" class="text-4xl font-bold text-blue-600">{{ $quiz->time_limit }}:00</div>
                     </div>
                 </div>
@@ -58,13 +58,13 @@
                                 <input type="radio" name="answers[{{ $question->id }}]" value="true" 
                                        class="w-4 h-4 text-green-600 border-gray-300 focus:ring-green-500"
                                        required>
-                                <span class="ml-3 text-gray-800 font-semibold">✓ Benar</span>
+                                <span class="ml-3 text-gray-800 font-semibold">Benar</span>
                             </label>
                             <label class="flex items-center p-4 border border-gray-300 rounded-lg hover:bg-red-50 hover:border-red-400 cursor-pointer transition">
                                 <input type="radio" name="answers[{{ $question->id }}]" value="false" 
                                        class="w-4 h-4 text-red-600 border-gray-300 focus:ring-red-500"
                                        required>
-                                <span class="ml-3 text-gray-800 font-semibold">✗ Salah</span>
+                                <span class="ml-3 text-gray-800 font-semibold">Salah</span>
                             </label>
                         </div>
 
@@ -98,7 +98,7 @@
                     <button type="submit" id="submitBtn" 
                             class="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg transition hidden"
                             onclick="return confirm('Apakah Anda yakin ingin menyelesaikan quiz ini?')">
-                        ✓ Selesai & Kirim
+                        Selesai & Kirim
                     </button>
                 </div>
             </form>

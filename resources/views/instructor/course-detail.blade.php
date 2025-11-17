@@ -65,16 +65,22 @@
             <div class="bg-white rounded-2xl shadow-lg mb-6">
                 <div class="flex border-b overflow-x-auto">
                     <button class="tab-button active px-6 py-4 font-medium text-gray-600 hover:text-blue-600 transition-colors whitespace-nowrap" data-tab="students">
-                        <i class="fas fa-users mr-2"></i>Students ({{ $students->count() }})
+                        Students ({{ $students->count() }})
                     </button>
                     <button class="tab-button px-6 py-4 font-medium text-gray-600 hover:text-blue-600 transition-colors whitespace-nowrap" data-tab="materials">
-                        <i class="fas fa-book mr-2"></i>Materials ({{ $materials->count() }})
+                        Materials ({{ $materials->count() }})
                     </button>
                     <button class="tab-button px-6 py-4 font-medium text-gray-600 hover:text-blue-600 transition-colors whitespace-nowrap" data-tab="assignments">
-                        <i class="fas fa-tasks mr-2"></i>Assignments ({{ $assignments->count() }})
+                        Assignments ({{ $assignments->count() }})
+                    </button>
+                    <button class="tab-button px-6 py-4 font-medium text-gray-600 hover:text-blue-600 transition-colors whitespace-nowrap" data-tab="quizzes">
+                        Quizzes
+                    </button>
+                    <button class="tab-button px-6 py-4 font-medium text-gray-600 hover:text-blue-600 transition-colors whitespace-nowrap" data-tab="forum">
+                        Forum
                     </button>
                     <button class="tab-button px-6 py-4 font-medium text-gray-600 hover:text-blue-600 transition-colors whitespace-nowrap" data-tab="analytics">
-                        <i class="fas fa-chart-bar mr-2"></i>Analytics
+                        Analytics
                     </button>
                 </div>
             </div>
@@ -154,8 +160,8 @@
                     <div class="bg-white rounded-2xl shadow-lg p-6">
                         <div class="flex items-center justify-between mb-6">
                             <h3 class="text-2xl font-bold text-gray-800">Course Materials</h3>
-                            <button onclick="showMaterialForm()" class="bg-green-500 hover:bg-green-600 text-white font-bold px-4 py-2 rounded-lg transition-all flex items-center gap-2">
-                                <i class="fas fa-plus"></i> Add Material
+                            <button onclick="showMaterialForm()" class="bg-green-500 hover:bg-green-600 text-white font-bold px-4 py-2 rounded-lg transition-all">
+                                Add Material
                             </button>
                         </div>
 
@@ -183,7 +189,7 @@
                                     </div>
                                     <div class="flex gap-3">
                                         <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-lg transition-all">
-                                            <i class="fas fa-upload mr-2"></i> Upload Material
+                                            Upload Material
                                         </button>
                                         <button type="button" onclick="hideMaterialForm()" class="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-all">
                                             Cancel
@@ -199,7 +205,7 @@
                             <div class="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:border-blue-300 transition-colors">
                                 <div class="flex items-center gap-4">
                                     <div class="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center">
-                                        <i class="fas fa-file-pdf text-white text-xl"></i>
+                                        PDF
                                     </div>
                                     <div>
                                         <h4 class="font-semibold text-gray-800">{{ $material->title }}</h4>
@@ -211,16 +217,16 @@
                                 </div>
                                 <div class="flex gap-2">
                                     <a href="/storage/{{ $material->file_path }}" 
-                                       class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-all flex items-center gap-2"
+                                       class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-all"
                                        target="_blank">
-                                        <i class="fas fa-download"></i> Download
+                                        Download
                                     </a>
                                     <form action="{{ route('instructor.materials.delete', $material->id) }}" method="POST">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition-all flex items-center gap-2"
+                                        <button type="submit" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition-all"
                                                 onclick="return confirm('Delete this material?')">
-                                            <i class="fas fa-trash"></i> Delete
+                                            Delete
                                         </button>
                                     </form>
                                 </div>
@@ -229,7 +235,6 @@
 
                             @if($materials->count() === 0)
                             <div class="text-center py-12 text-gray-500">
-                                <i class="fas fa-book-open text-4xl mb-4 opacity-50"></i>
                                 <p>No materials uploaded yet.</p>
                                 <p class="text-sm mt-1">Add your first material using the button above.</p>
                             </div>
@@ -243,8 +248,8 @@
                     <div class="bg-white rounded-2xl shadow-lg p-6">
                         <div class="flex items-center justify-between mb-6">
                             <h3 class="text-2xl font-bold text-gray-800">Course Assignments</h3>
-                            <button onclick="showAssignmentForm()" class="bg-green-500 hover:bg-green-600 text-white font-bold px-4 py-2 rounded-lg transition-all flex items-center gap-2">
-                                <i class="fas fa-plus"></i> Add Assignment
+                            <button onclick="showAssignmentForm()" class="bg-green-500 hover:bg-green-600 text-white font-bold px-4 py-2 rounded-lg transition-all">
+                                Add Assignment
                             </button>
                         </div>
 
@@ -283,7 +288,7 @@
                                     </div>
                                     <div class="flex gap-3">
                                         <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-lg transition-all">
-                                            <i class="fas fa-save mr-2"></i> Create Assignment
+                                            Create Assignment
                                         </button>
                                         <button type="button" onclick="hideAssignmentForm()" class="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-all">
                                             Cancel
@@ -291,6 +296,65 @@
                                     </div>
                                 </div>
                             </form>
+                        </div>
+
+                        <!-- Edit Assignment Modal -->
+                        <div id="editAssignmentModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50 p-4">
+                            <div class="bg-white rounded-lg shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+                                <div class="bg-blue-500 text-white px-6 py-4 flex items-center justify-between sticky top-0 z-10">
+                                    <h3 class="text-xl font-bold">Edit Assignment</h3>
+                                    <button type="button" onclick="closeEditAssignmentModal()" class="text-white hover:bg-blue-600 rounded-lg p-1 transition">
+                                        ✕
+                                    </button>
+                                </div>
+                                <form id="editAssignmentForm" method="POST">
+                                    @csrf
+                                    @method('PUT')
+                                    <div class="px-6 py-6 space-y-4">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Title</label>
+                                            <input type="text" id="editTitle" name="title" required 
+                                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                                            <textarea id="editDescription" name="description" rows="2"
+                                                      class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"></textarea>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Instructions</label>
+                                            <textarea id="editInstructions" name="instructions" rows="3" required
+                                                      class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"></textarea>
+                                        </div>
+                                        <div class="grid grid-cols-2 gap-4">
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-700 mb-2">Due Date</label>
+                                                <input type="datetime-local" id="editDueDate" name="due_date" required 
+                                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                                <p class="text-xs text-gray-500 mt-2">
+                                                    📢 Students will be notified of deadline changes
+                                                </p>
+                                            </div>
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-700 mb-2">Published</label>
+                                                <select id="editIsPublished" name="is_published" required 
+                                                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                                    <option value="1">Yes</option>
+                                                    <option value="0">No</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="px-6 py-4 bg-gray-50 flex gap-3 justify-end border-t">
+                                        <button type="button" onclick="closeEditAssignmentModal()" class="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 transition-all font-medium">
+                                            Cancel
+                                        </button>
+                                        <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg transition-all font-medium flex items-center gap-2">
+                                            Save Changes
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
                         </div>
 
                         <!-- Assignments List -->
@@ -319,18 +383,18 @@
                                 <div class="flex gap-2">
                                     <a href="{{ route('instructor.submissions', $assignment->id) }}" 
                                        class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-all flex items-center gap-2">
-                                        <i class="fas fa-eye"></i> View Submissions
+                                        View Submissions
                                     </a>
                                     <button onclick="editAssignment({{ $assignment->id }})" 
                                             class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg transition-all flex items-center gap-2">
-                                        <i class="fas fa-edit"></i> Edit
+                                        Edit
                                     </button>
                                     <form action="{{ route('instructor.assignments.delete', $assignment->id) }}" method="POST" class="inline">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition-all flex items-center gap-2"
                                                 onclick="return confirm('Delete this assignment?')">
-                                            <i class="fas fa-trash"></i> Delete
+                                            Delete
                                         </button>
                                     </form>
                                 </div>
@@ -339,7 +403,7 @@
 
                             @if($assignments->count() === 0)
                             <div class="text-center py-12 text-gray-500">
-                                <i class="fas fa-tasks text-4xl mb-4 opacity-50"></i>
+                                📋
                                 <p>No assignments created yet.</p>
                                 <p class="text-sm mt-1">Create your first assignment using the button above.</p>
                             </div>
@@ -402,6 +466,171 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Quizzes Tab -->
+                <div id="quizzes" class="tab-content">
+                    <div class="bg-white rounded-2xl shadow-lg p-6">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-2xl font-bold text-gray-800">Course Quizzes</h3>
+                            <a href="{{ route('instructor.quiz.create', $course->id) }}" 
+                               class="bg-green-500 hover:bg-green-600 text-white font-bold px-4 py-2 rounded-lg transition-all flex items-center gap-2">
+                                Create Quiz
+                            </a>
+                        </div>
+
+                        <!-- Quizzes List -->
+                        <div class="space-y-6">
+                            @if($quizzes && $quizzes->count() > 0)
+                                @foreach($quizzes as $quiz)
+                                <div class="border border-gray-200 rounded-lg p-6 hover:border-blue-300 transition-colors">
+                                    <div class="flex items-start justify-between mb-4">
+                                        <div>
+                                            <h4 class="text-xl font-bold text-gray-800">{{ $quiz->title }}</h4>
+                                            @if($quiz->description)
+                                            <p class="text-gray-600 mt-2">{{ $quiz->description }}</p>
+                                            @endif
+                                        </div>
+                                        <div class="text-right">
+                                            <div class="text-sm text-gray-500">Questions</div>
+                                            <div class="font-semibold text-gray-800">{{ $quiz->questions->count() ?? 0 }}</div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="bg-gray-50 rounded-lg p-4 mb-4">
+                                        <div class="grid grid-cols-3 gap-4 text-center">
+                                            <div>
+                                                <p class="text-sm text-gray-600">Duration</p>
+                                                <p class="font-semibold text-gray-800">{{ $quiz->duration_minutes ?? 'N/A' }} min</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-sm text-gray-600">Total Points</p>
+                                                <p class="font-semibold text-gray-800">{{ $quiz->total_points ?? 0 }} pts</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-sm text-gray-600">Submissions</p>
+                                                <p class="font-semibold text-gray-800">{{ $quiz->submissions->count() ?? 0 }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex gap-2">
+                                        <a href="{{ route('instructor.quiz.edit', [$course->id, $quiz->id]) }}" 
+                                           class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-all flex items-center gap-2">
+                                            Edit
+                                        </a>
+                                        <a href="{{ route('instructor.quiz.submissions', [$course->id, $quiz->id]) }}" 
+                                           class="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-lg transition-all flex items-center gap-2">
+                                            View Submissions
+                                        </a>
+                                        <form action="{{ route('instructor.quiz.destroy', [$course->id, $quiz->id]) }}" method="POST" class="inline">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition-all flex items-center gap-2"
+                                                    onclick="return confirm('Delete this quiz?')">
+                                                Delete
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                                @endforeach
+                            @else
+                            <div class="text-center py-12 text-gray-500">
+                                ❔
+                                <p>No quizzes created yet.</p>
+                                <p class="text-sm mt-1">Create your first quiz using the button above.</p>
+                            </div>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Forum Tab -->
+                <div id="forum" class="tab-content">
+                    <div class="bg-white rounded-2xl shadow-lg p-6">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-2xl font-bold text-gray-800">Course Forum</h3>
+                            <button onclick="showNewTopicForm()" 
+                                    class="bg-green-500 hover:bg-green-600 text-white font-bold px-4 py-2 rounded-lg transition-all flex items-center gap-2">
+                                New Topic
+                            </button>
+                        </div>
+
+                        <!-- New Topic Form -->
+                        <div id="newTopicForm" class="bg-gray-50 rounded-lg p-6 mb-6 hidden">
+                            <h4 class="text-lg font-semibold text-gray-800 mb-4">Create New Topic</h4>
+                            <form action="{{ route('instructor.forum.store', $course->id) }}" method="POST" enctype="multipart/form-data">
+                                @csrf
+                                <div class="space-y-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Subject</label>
+                                        <input type="text" name="subject" required 
+                                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Message</label>
+                                        <textarea name="message" rows="4" required
+                                                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"></textarea>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Attachment (Optional)</label>
+                                        <input type="file" name="attachment" 
+                                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                    </div>
+                                    <div class="flex gap-3">
+                                        <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-lg transition-all">
+                                            Post Topic
+                                        </button>
+                                        <button type="button" onclick="hideNewTopicForm()" class="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-all">
+                                            Cancel
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+
+                        <!-- Forum Topics List -->
+                        <div class="space-y-6">
+                            @if($forums && $forums->count() > 0)
+                                @foreach($forums as $forum)
+                                <div class="border border-gray-200 rounded-lg p-6 hover:border-blue-300 transition-colors">
+                                    <div class="flex items-start justify-between mb-3">
+                                        <div>
+                                            <h4 class="text-lg font-bold text-gray-800">{{ $forum->subject }}</h4>
+                                            <p class="text-sm text-gray-500">by {{ $forum->user->name }} • {{ $forum->created_at->diffForHumans() }}</p>
+                                        </div>
+                                        <span class="bg-blue-100 text-blue-800 text-xs font-medium px-3 py-1 rounded-full">
+                                            {{ $forum->replies->count() ?? 0 }} Replies
+                                        </span>
+                                    </div>
+                                    
+                                    <p class="text-gray-700 mb-4">{{ Str::limit($forum->message, 200) }}</p>
+                                    
+                                    <div class="flex gap-2">
+                                        <a href="{{ route('instructor.forum.show', [$course->id, $forum->id]) }}" 
+                                           class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-all flex items-center gap-2 text-sm">
+                                            View
+                                        </a>
+                                        <form action="{{ route('instructor.forum.destroy', [$course->id, $forum->id]) }}" method="POST" class="inline">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition-all flex items-center gap-2 text-sm"
+                                                    onclick="return confirm('Delete this topic?')">
+                                                Delete
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                                @endforeach
+                            @else
+                            <div class="text-center py-12 text-gray-500">
+                                📄
+                                <p>No forum topics yet.</p>
+                                <p class="text-sm mt-1">Start the discussion by creating a new topic.</p>
+                            </div>
+                            @endif
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
@@ -459,9 +688,56 @@
             document.getElementById('assignmentForm').classList.add('hidden');
         }
 
+        // Edit assignment modal
         function editAssignment(assignmentId) {
-            alert('Edit assignment functionality for ID: ' + assignmentId);
-            // In real implementation, you would show an edit modal
+            // Fetch assignment data
+            fetch(`/api/assignments/${assignmentId}`)
+                .then(response => response.json())
+                .then(data => {
+                    // Populate form fields
+                    document.getElementById('editTitle').value = data.title;
+                    document.getElementById('editDescription').value = data.description || '';
+                    document.getElementById('editInstructions').value = data.instructions;
+                    
+                    // Convert due_date to datetime-local format (YYYY-MM-DDTHH:mm)
+                    const dueDate = new Date(data.due_date);
+                    const formattedDate = dueDate.toISOString().slice(0, 16);
+                    document.getElementById('editDueDate').value = formattedDate;
+                    
+                    document.getElementById('editIsPublished').value = data.is_published ? '1' : '0';
+                    
+                    // Set form action
+                    const form = document.getElementById('editAssignmentForm');
+                    form.action = `/instructor/assignments/${assignmentId}`;
+                    
+                    // Show modal
+                    document.getElementById('editAssignmentModal').classList.remove('hidden');
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Failed to load assignment details');
+                });
+        }
+
+        function closeEditAssignmentModal() {
+            document.getElementById('editAssignmentModal').classList.add('hidden');
+        }
+
+        // Close modal when clicking outside
+        document.addEventListener('click', function(event) {
+            const modal = document.getElementById('editAssignmentModal');
+            if (event.target === modal) {
+                closeEditAssignmentModal();
+            }
+        });
+
+        // Forum form toggle
+        function showNewTopicForm() {
+            document.getElementById('newTopicForm').classList.remove('hidden');
+        }
+
+        function hideNewTopicForm() {
+            document.getElementById('newTopicForm').classList.add('hidden');
         }
     </script>
 

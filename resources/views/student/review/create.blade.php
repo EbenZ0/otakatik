@@ -12,7 +12,7 @@
                     ← Kembali
                 </a>
             </div>
-            <h1 class="text-3xl font-bold mb-2">{{ isset($review) ? '✏️ Edit Review' : '⭐ Beri Rating & Review' }}</h1>
+            <h1 class="text-3xl font-bold mb-2">{{ isset($review) ? 'Edit Review' : 'Beri Rating & Review' }}</h1>
             <p class="text-amber-100">{{ $course->title }}</p>
         </div>
     </div>
@@ -22,7 +22,7 @@
         <div class="bg-white rounded-lg border border-gray-200 p-8">
             @if ($errors->any())
                 <div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
-                    <p class="text-red-800 font-semibold mb-2">❌ Terjadi Kesalahan:</p>
+                    <p class="text-red-800 font-semibold mb-2">Terjadi Kesalahan:</p>
                     <ul class="text-sm text-red-700 space-y-1">
                         @foreach ($errors->all() as $error)
                             <li>• {{ $error }}</li>
@@ -42,7 +42,7 @@
                 <div class="space-y-8">
                     <!-- Rating Selection -->
                     <div>
-                        <label class="block text-lg font-semibold text-gray-800 mb-4">⭐ Berapa Rating Anda untuk Course Ini?</label>
+                        <label class="block text-lg font-semibold text-gray-800 mb-4">Berapa Rating Anda untuk Course Ini?</label>
                         
                         <div id="ratingContainer" class="flex gap-4">
                             @for($i = 1; $i <= 5; $i++)
@@ -52,7 +52,7 @@
                                        class="sr-only"
                                        onchange="updateRatingDisplay()">
                                 <span class="text-5xl transition group-hover:scale-110" id="star-{{ $i }}">
-                                    {{ old('rating', $review->rating ?? 0) >= $i ? '⭐' : '☆' }}
+                                    {{ old('rating', $review->rating ?? 0) >= $i ? '[*]' : '[ ]' }}
                                 </span>
                             </label>
                             @endfor
@@ -62,11 +62,11 @@
                             @php
                                 $ratings = [
                                     0 => '-- Pilih Rating --',
-                                    1 => '😞 Sangat Buruk - Tidak Merekomendasikan',
-                                    2 => '😐 Buruk - Ada Banyak Masalah',
-                                    3 => '😊 Sedang - Cukup Baik',
-                                    4 => '😄 Bagus - Sangat Merekomendasikan',
-                                    5 => '😍 Sempurna - Tidak Ada Bandingannya!'
+                                    1 => 'Sangat Buruk - Tidak Merekomendasikan',
+                                    2 => 'Buruk - Ada Banyak Masalah',
+                                    3 => 'Sedang - Cukup Baik',
+                                    4 => 'Bagus - Sangat Merekomendasikan',
+                                    5 => 'Sempurna - Tidak Ada Bandingannya!'
                                 ];
                             @endphp
                             <span id="ratingText">{{ $ratings[old('rating', $review->rating ?? 0)] }}</span>
@@ -75,7 +75,7 @@
 
                     <!-- Review Text -->
                     <div>
-                        <label class="block text-lg font-semibold text-gray-800 mb-3">📝 Detail Review Anda</label>
+                        <label class="block text-lg font-semibold text-gray-800 mb-3">Detail Review Anda</label>
                         <p class="text-sm text-gray-600 mb-3">Bagikan pengalaman dan pendapat Anda tentang course ini</p>
                         
                         <textarea name="review_text" rows="6"
@@ -88,12 +88,12 @@
 
                     <!-- Guidelines -->
                     <div class="bg-blue-50 rounded-lg border border-blue-200 p-4">
-                        <h4 class="font-semibold text-blue-900 mb-2">💡 Tips Menulis Review yang Baik</h4>
+                        <h4 class="font-semibold text-blue-900 mb-2">Tips Menulis Review yang Baik</h4>
                         <ul class="text-sm text-blue-800 space-y-1">
-                            <li>✓ Jujur dan spesifik tentang pengalaman Anda</li>
-                            <li>✓ Sebutkan aspek positif dan area untuk perbaikan</li>
-                            <li>✓ Hindari komentar yang menyerang atau tidak pantas</li>
-                            <li>✓ Tulislah dengan jelas dan mudah dipahami</li>
+                            <li>Jujur dan spesifik tentang pengalaman Anda</li>
+                            <li>Sebutkan aspek positif dan area untuk perbaikan</li>
+                            <li>Hindari komentar yang menyerang atau tidak pantas</li>
+                            <li>Tulislah dengan jelas dan mudah dipahami</li>
                         </ul>
                     </div>
 
@@ -101,11 +101,11 @@
                     <div class="flex gap-4 pt-6 border-t border-gray-200">
                         <button type="submit" 
                                 class="flex-1 bg-amber-600 hover:bg-amber-700 text-white font-semibold py-3 px-6 rounded-lg transition">
-                            ✓ {{ isset($review) ? 'Update Review' : 'Kirim Review' }}
+                            {{ isset($review) ? 'Update Review' : 'Kirim Review' }}
                         </button>
                         <a href="{{ route('student.review.index', $course->id) }}" 
                            class="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition font-medium">
-                            ✕ Batal
+                            Batal
                         </a>
                     </div>
                 </div>

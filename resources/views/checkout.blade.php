@@ -63,7 +63,7 @@
                         <!-- Course Info -->
                         <div class="flex items-start gap-4 p-4 bg-gray-50 rounded-lg mb-6">
                             <div class="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
-                                <i class="fas fa-book text-white text-xl"></i>
+                                [C]
                             </div>
                             <div class="flex-1">
                                 <h3 class="font-bold text-gray-800 text-lg">{{ $course->title }}</h3>
@@ -96,7 +96,7 @@
                             <div class="grid grid-cols-2 gap-4">
                                 <div class="payment-method border-2 border-gray-200 rounded-lg p-4 cursor-pointer" data-method="bank_transfer">
                                     <div class="flex items-center gap-3">
-                                        <i class="fas fa-university text-blue-500 text-xl"></i>
+                                        <span class="text-2xl">🏦</span>
                                         <div>
                                             <p class="font-medium text-gray-800">Bank Transfer</p>
                                             <p class="text-sm text-gray-600">BCA, BNI, BRI, etc</p>
@@ -105,7 +105,7 @@
                                 </div>
                                 <div class="payment-method border-2 border-gray-200 rounded-lg p-4 cursor-pointer" data-method="credit_card">
                                     <div class="flex items-center gap-3">
-                                        <i class="fas fa-credit-card text-green-500 text-xl"></i>
+                                        <span class="text-2xl">💳</span>
                                         <div>
                                             <p class="font-medium text-gray-800">Credit Card</p>
                                             <p class="text-sm text-gray-600">Visa, Mastercard</p>
@@ -114,7 +114,7 @@
                                 </div>
                                 <div class="payment-method border-2 border-gray-200 rounded-lg p-4 cursor-pointer" data-method="gopay">
                                     <div class="flex items-center gap-3">
-                                        <i class="fas fa-mobile-alt text-purple-500 text-xl"></i>
+                                        <span class="text-2xl">📱</span>
                                         <div>
                                             <p class="font-medium text-gray-800">GoPay</p>
                                             <p class="text-sm text-gray-600">E-Wallet</p>
@@ -123,7 +123,7 @@
                                 </div>
                                 <div class="payment-method border-2 border-gray-200 rounded-lg p-4 cursor-pointer" data-method="shopeepay">
                                     <div class="flex items-center gap-3">
-                                        <i class="fas fa-shopping-bag text-orange-500 text-xl"></i>
+                                        <span class="text-2xl">🛍️</span>
                                         <div>
                                             <p class="font-medium text-gray-800">ShopeePay</p>
                                             <p class="text-sm text-gray-600">E-Wallet</p>
@@ -146,7 +146,7 @@
                         @else
                         <!-- Instructor Info -->
                         <div class="flex items-start gap-3 p-4 bg-green-50 rounded-lg border-2 border-green-200">
-                            <i class="fas fa-star text-green-600 text-xl mt-1"></i>
+                            🌟
                             <div>
                                 <h4 class="font-bold text-green-800 mb-1">Instructor Benefits</h4>
                                 <p class="text-sm text-green-700">Sebagai seorang instructor, Anda mendapatkan akses gratis ke semua course di platform kami untuk memastikan kualitas pengajaran yang terbaik.</p>
@@ -165,7 +165,7 @@
                             <!-- Instructor Free Access -->
                             <div class="bg-green-50 border-2 border-green-500 rounded-lg p-4 mb-6">
                                 <div class="flex items-center gap-2 mb-3">
-                                    <i class="fas fa-star text-green-600 text-xl"></i>
+                                    <span class="text-2xl">🌟</span>
                                     <h4 class="font-bold text-green-800">Instructor Free Access</h4>
                                 </div>
                                 <p class="text-green-700 text-sm mb-4">Anda mendapatkan akses gratis ke semua course sebagai instructor.</p>
@@ -174,7 +174,7 @@
                                 </div>
                                 <button type="button" onclick="enrollFreeAsInstructor()" 
                                         class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-4 px-6 rounded-lg transition-all">
-                                    <i class="fas fa-check mr-2"></i> Enroll Now
+                                    Enroll Now
                                 </button>
                             </div>
                         @else
@@ -199,7 +199,7 @@
                             <button type="button" onclick="processPayment()" 
                                     class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-6 rounded-lg transition-all disabled:bg-gray-400 disabled:cursor-not-allowed"
                                     id="payButton" disabled>
-                                <i class="fas fa-lock mr-2"></i> Pay Now
+                                Pay Now
                             </button>
 
                             <!-- Development Only - Simulate Payment -->
@@ -207,13 +207,12 @@
                                 <p class="text-sm text-yellow-800 font-medium mb-2">Development Mode</p>
                                 <button type="button" onclick="simulatePayment()" 
                                         class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg transition-all text-sm">
-                                    <i class="fas fa-bolt mr-2"></i> Simulate Successful Payment
+                                    Simulate Successful Payment
                                 </button>
                             </div>
                         @endif
                         
                         <p class="text-xs text-gray-500 text-center mt-4">
-                            <i class="fas fa-shield-alt mr-1"></i>
                             Secure payment powered by Midtrans
                         </p>
                     </div>
@@ -322,7 +321,7 @@
         async function enrollFreeAsInstructor() {
             const button = event.target;
             button.disabled = true;
-            button.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Enrolling...';
+            button.innerHTML = 'Enrolling...';
 
             try {
                 const response = await fetch(`/checkout/process/{{ $course->id }}`, {
@@ -348,7 +347,7 @@
             } catch (error) {
                 alert('Enrollment failed: ' + error.message);
                 button.disabled = false;
-                button.innerHTML = '<i class="fas fa-check mr-2"></i> Enroll Now';
+                button.innerHTML = 'Enroll Now';
             }
         }
 
@@ -358,7 +357,7 @@
             const payButton = document.getElementById('payButton');
             
             payButton.disabled = true;
-            payButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Processing...';
+            payButton.innerHTML = 'Processing...';
 
             try {
                 const response = await fetch(`/checkout/process/{{ $course->id }}`, {
@@ -393,12 +392,12 @@
                             console.log('Payment error:', result);
                             alert('Payment failed. Please try again.');
                             payButton.disabled = false;
-                            payButton.innerHTML = '<i class="fas fa-lock mr-2"></i> Pay Now';
+                            payButton.innerHTML = 'Pay Now';
                         },
                         onClose: function() {
                             console.log('Payment popup closed');
                             payButton.disabled = false;
-                            payButton.innerHTML = '<i class="fas fa-lock mr-2"></i> Pay Now';
+                            payButton.innerHTML = 'Pay Now';
                         }
                     });
                 } else {
@@ -407,7 +406,7 @@
             } catch (error) {
                 alert('Payment processing failed: ' + error.message);
                 payButton.disabled = false;
-                payButton.innerHTML = '<i class="fas fa-lock mr-2"></i> Pay Now';
+                payButton.innerHTML = 'Pay Now';
             }
         }
 
