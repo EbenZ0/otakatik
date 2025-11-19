@@ -303,8 +303,8 @@
                             <div class="bg-white rounded-lg shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
                                 <div class="bg-blue-500 text-white px-6 py-4 flex items-center justify-between sticky top-0 z-10">
                                     <h3 class="text-xl font-bold">Edit Assignment</h3>
-                                    <button type="button" onclick="closeEditAssignmentModal()" class="text-white hover:bg-blue-600 rounded-lg p-1 transition">
-                                        ✕
+                                        <button type="button" onclick="closeEditAssignmentModal()" class="text-white hover:bg-blue-600 rounded-lg p-1 transition">
+                                        
                                     </button>
                                 </div>
                                 <form id="editAssignmentForm" method="POST">
@@ -403,7 +403,6 @@
 
                             @if($assignments->count() === 0)
                             <div class="text-center py-12 text-gray-500">
-                                📋
                                 <p>No assignments created yet.</p>
                                 <p class="text-sm mt-1">Create your first assignment using the button above.</p>
                             </div>

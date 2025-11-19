@@ -76,7 +76,7 @@ class AuthController extends Controller
                 return redirect()->intended('/admin/dashboard')->with('success', '👋 Welcome back, Admin ' . Auth::user()->name . '!');
             }
             
-            return redirect()->intended('/dashboard')->with('success', '👋 Welcome back, ' . Auth::user()->name . '!');
+            return redirect()->intended('/dashboard')->with('success', ' Welcome back, ' . Auth::user()->name . '!');
         }
 
         return back()->withErrors([

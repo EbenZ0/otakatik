@@ -9,7 +9,7 @@
         <div class="max-w-4xl mx-auto">
             <div class="mb-4">
                 <a href="{{ route('student.dashboard') }}" class="hover:opacity-80">
-                    ← Kembali
+                    Kembali
                 </a>
             </div>
             <h1 class="text-3xl font-bold mb-2">Profil Saya</h1>
@@ -44,7 +44,7 @@
                     <div class="bg-gradient-to-br from-purple-50 to-blue-50 rounded-lg border border-purple-200 p-4">
                         <div class="space-y-3">
                             <div class="flex items-center justify-between">
-                                <span class="text-sm text-gray-600">📚 Courses</span>
+                                <span class="text-sm text-gray-600"> Courses</span>
                                 <span class="font-bold text-purple-600">{{ $user->courseRegistrations()->count() }}</span>
                             </div>
                             <div class="flex items-center justify-between">
@@ -70,7 +70,7 @@
                             <p class="text-red-800 font-semibold mb-2">Terjadi Kesalahan:</p>
                             <ul class="text-sm text-red-700 space-y-1">
                                 @foreach ($errors->all() as $error)
-                                    <li>• {{ $error }}</li>
+                                    <li>- {{ $error }}</li>
                                 @endforeach
                             </ul>
                         </div>
@@ -185,7 +185,7 @@
                                         <input type="file" name="profile_picture" accept="image/*" id="profilePictureInput"
                                                class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
                                         <div class="text-center">
-                                            <div class="text-3xl mb-2">📷</div>
+                                            <!-- icon removed: use text-only instructions below -->
                                             <p class="text-sm font-medium text-gray-700">Klik atau Drag & Drop</p>
                                             <p class="text-xs text-gray-600">JPG, PNG (Maks 5MB)</p>
                                         </div>

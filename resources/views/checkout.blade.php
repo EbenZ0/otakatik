@@ -105,7 +105,7 @@
                                 </div>
                                 <div class="payment-method border-2 border-gray-200 rounded-lg p-4 cursor-pointer" data-method="credit_card">
                                     <div class="flex items-center gap-3">
-                                        <span class="text-2xl">💳</span>
+                                        <span class="text-2xl"></span>
                                         <div>
                                             <p class="font-medium text-gray-800">Credit Card</p>
                                             <p class="text-sm text-gray-600">Visa, Mastercard</p>
@@ -114,7 +114,7 @@
                                 </div>
                                 <div class="payment-method border-2 border-gray-200 rounded-lg p-4 cursor-pointer" data-method="gopay">
                                     <div class="flex items-center gap-3">
-                                        <span class="text-2xl">📱</span>
+                                        <span class="text-2xl"></span>
                                         <div>
                                             <p class="font-medium text-gray-800">GoPay</p>
                                             <p class="text-sm text-gray-600">E-Wallet</p>
@@ -123,7 +123,7 @@
                                 </div>
                                 <div class="payment-method border-2 border-gray-200 rounded-lg p-4 cursor-pointer" data-method="shopeepay">
                                     <div class="flex items-center gap-3">
-                                        <span class="text-2xl">🛍️</span>
+                                        <span class="text-2xl"></span>
                                         <div>
                                             <p class="font-medium text-gray-800">ShopeePay</p>
                                             <p class="text-sm text-gray-600">E-Wallet</p>
@@ -199,7 +199,7 @@
                             <button type="button" onclick="processPayment()" 
                                     class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-6 rounded-lg transition-all disabled:bg-gray-400 disabled:cursor-not-allowed"
                                     id="payButton" disabled>
-                                Pay Now
+                                  Pay
                             </button>
 
                             <!-- Development Only - Simulate Payment -->

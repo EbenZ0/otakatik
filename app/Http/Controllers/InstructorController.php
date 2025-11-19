@@ -215,6 +215,7 @@ class InstructorController extends Controller
             'description' => 'nullable|string',
             'instructions' => 'required|string',
             'due_date' => 'required|date|after:now',
+            'max_points' => 'nullable|integer|min:1'
         ]);
 
         $assignment = CourseAssignment::create([
@@ -223,6 +224,8 @@ class InstructorController extends Controller
             'description' => $request->description,
             'instructions' => $request->instructions,
             'due_date' => $request->due_date,
+            // set max points to provided value or sensible default (100)
+            'max_points' => $request->input('max_points', 100),
             'is_published' => true,
         ]);
 

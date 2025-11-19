@@ -6,11 +6,8 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'OtakAtik')</title>
 
-    <!-- Font Awesome CDN -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-p1CmF0sH3z8s6q+YQ+VZk5Zk+0u2b9Qf6eZ1Vw1Xo6x1qX6eY5q1K1Z1pWvY1Z1Z1Z1Z1Z1Z1Z1Z1Z1Z1Z1Z1Z1Z==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-
-    <!-- App CSS (built by Vite or plain asset) -->
-    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+    <!-- App assets (loaded via Vite) -->
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     @stack('head')
 </head>
@@ -28,8 +25,6 @@
         </div>
     @endauth
 
-    <!-- App JS -->
-    <script src="{{ asset('js/app.js') }}" defer></script>
     @stack('scripts')
 </body>
 </html>
