@@ -9,10 +9,10 @@
         <div class="max-w-6xl mx-auto">
             <div class="mb-4">
                 <a href="{{ route('instructor.courses.show', $course->id) }}" class="hover:opacity-80">
-                    ← Kembali
+                    Kembali
                 </a>
             </div>
-            <h1 class="text-3xl font-bold mb-2">📋 Lihat Submissions</h1>
+            <h1 class="text-3xl font-bold mb-2">Lihat Submissions</h1>
             <p class="text-indigo-100">{{ $assignment->title }}</p>
         </div>
     </div>
@@ -35,7 +35,7 @@
             </div>
             <div class="bg-white rounded-lg border border-gray-200 p-4">
                 <p class="text-sm text-gray-600 mb-1">Sudah Dinilai</p>
-                <p class="text-2xl font-bold text-blue-600">{{ $submissions->whereNotNull('score')->count() }}</p>
+                <p class="text-2xl font-bold text-blue-600">{{ $submissions->whereNotNull('grade')->count() }}</p>
             </div>
         </div>
 
@@ -84,7 +84,7 @@
                                 {{ $submission->submitted_at->format('d M H:i') }}
                             </td>
                             <td class="px-6 py-4 text-center">
-                                @if($submission->score !== null)
+                                @if($submission->grade !== null)
                                     <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-semibold">
                                         Dinilai
                                     </span>
@@ -95,10 +95,10 @@
                                 @endif
                             </td>
                             <td class="px-6 py-4 text-center">
-                                @if($submission->score !== null)
+                                @if($submission->grade !== null)
                                     <div class="flex items-center justify-center gap-2">
-                                        <span class="text-lg font-bold {{ $submission->score >= 70 ? 'text-green-600' : 'text-red-600' }}">
-                                            {{ $submission->score }}
+                                        <span class="text-lg font-bold {{ $submission->grade >= 70 ? 'text-green-600' : 'text-red-600' }}">
+                                            {{ $submission->grade }}
                                         </span>
                                         <span class="text-xs text-gray-600">/100</span>
                                     </div>
@@ -107,9 +107,9 @@
                                 @endif
                             </td>
                             <td class="px-6 py-4 text-center">
-                                <a href="{{ route('instructor.submissions.detail', $submission->id) }}" 
+                                <a href="{{ route('instructor.submissions.detail', [$assignment->id, $submission->id]) }}" 
                                    class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-xs font-semibold transition">
-                                    👁️ Lihat
+                                    Lihat
                                 </a>
                             </td>
                         </tr>
@@ -133,7 +133,7 @@
                             <td class="px-6 py-4 text-sm text-gray-700">-</td>
                             <td class="px-6 py-4 text-center">
                                 <span class="bg-red-100 text-red-800 px-3 py-1 rounded-full text-xs font-semibold">
-                                    ✗ Belum Submit
+                                    Belum Submit
                                 </span>
                             </td>
                             <td class="px-6 py-4 text-center">-</td>
@@ -151,11 +151,11 @@
         <div class="mt-6 flex gap-4">
             <a href="{{ route('instructor.courses.show', $course->id) }}" 
                class="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition font-medium">
-                ← Kembali
+                Kembali
             </a>
             <button onclick="window.print()" 
                     class="px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition font-medium">
-                🖨️ Print
+                Print
             </button>
         </div>
     </div>

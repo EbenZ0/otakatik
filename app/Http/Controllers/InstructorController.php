@@ -10,6 +10,7 @@ use App\Models\CourseAssignment;
 use App\Models\CourseRegistration;
 use App\Models\AssignmentSubmission;
 use App\Models\CourseForum;
+use App\Models\ForumReply;
 use Illuminate\Support\Facades\Storage;
 use App\Events\AssignmentPosted;
 use App\Events\AssignmentDeadlineChanged;
@@ -349,7 +350,11 @@ class InstructorController extends Controller
             abort(403, 'Unauthorized action.');
         }
 
-        return view('instructor.assignment-submissions', compact('assignment'));
+        $course = $assignment->course;
+        // load submissions with user relation
+        $submissions = $assignment->submissions()->with('user')->get();
+
+        return view('instructor.assignment-submissions', compact('assignment', 'course', 'submissions'));
     }
 
     /**
@@ -368,17 +373,37 @@ class InstructorController extends Controller
             abort(403, 'Unauthorized action.');
         }
 
-        $request->validate([
-            'grade' => 'required|numeric|min:0|max:' . $submission->assignment->max_points,
+        $validated = $request->validate([
+            'score' => 'required|numeric|min:0|max:' . $submission->assignment->max_points,
             'feedback' => 'nullable|string|max:1000'
         ]);
 
         $submission->update([
-            'grade' => $request->grade,
-            'feedback' => $request->feedback
+            'grade' => $validated['score'],
+            'feedback' => $validated['feedback'] ?? null
         ]);
 
         return back()->with('success', 'Submission berhasil dinilai!');
+    }
+
+    /**
+     * Show submission detail for grading UI
+     */
+    public function submissionDetail($assignmentId, $submissionId)
+    {
+        if (!Auth::check() || !Auth::user()->is_instructor) {
+            abort(403, 'Unauthorized access.');
+        }
+
+        $submission = AssignmentSubmission::with(['assignment.course', 'user'])->findOrFail($submissionId);
+
+        if ($submission->assignment->id != $assignmentId || $submission->assignment->course->instructor_id !== Auth::id()) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        return view('instructor.submission-grade', [
+            'submission' => $submission,
+        ]);
     }
 
     /**
@@ -486,5 +511,56 @@ class InstructorController extends Controller
         $forum->delete();
 
         return back()->with('success', 'Forum topic deleted successfully!');
+    }
+
+    /**
+     * Store reply for forum topic
+     */
+    public function storeForumReply(Request $request, $courseId, $forumId)
+    {
+        if (!Auth::check()) {
+            abort(403, 'Unauthorized access.');
+        }
+
+        $course = Course::findOrFail($courseId);
+        $forum = CourseForum::findOrFail($forumId);
+
+        if ($course->instructor_id !== Auth::id()) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $data = $request->validate([
+            'content' => 'required|string',
+        ]);
+
+        ForumReply::create([
+            'forum_id' => $forum->id,
+            'user_id' => Auth::id(),
+            'message' => $data['content'],
+        ]);
+
+        return back()->with('success', 'Balasan berhasil ditambahkan!');
+    }
+
+    /**
+     * Delete reply from forum topic
+     */
+    public function deleteForumReply($courseId, $forumId, $replyId)
+    {
+        if (!Auth::check()) {
+            abort(403, 'Unauthorized access.');
+        }
+
+        $course = Course::findOrFail($courseId);
+        $forum = CourseForum::findOrFail($forumId);
+        $reply = ForumReply::findOrFail($replyId);
+
+        if ($course->instructor_id !== Auth::id() || $forum->id !== $reply->forum_id) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $reply->delete();
+
+        return back()->with('success', 'Balasan berhasil dihapus!');
     }
 }

@@ -13,8 +13,8 @@ class NotifyAssignmentPosted
         $course = $assignment->course;
 
         // Get all enrolled students in this course
-        $enrolledStudents = $course->courseRegistrations()
-            ->where('status', 'paid')
+        // use Course model's activeRegistrations() helper which already filters paid
+        $enrolledStudents = $course->activeRegistrations()
             ->pluck('user_id')
             ->toArray();
 

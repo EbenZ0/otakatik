@@ -8,7 +8,7 @@
     <div class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-8">
         <div class="max-w-5xl mx-auto">
             <div class="mb-4">
-                <a href="{{ route('instructor.submissions.list', $submission->assignment->id) }}" class="hover:opacity-80">
+                <a href="{{ route('instructor.submissions', $submission->assignment->id) }}" class="hover:opacity-80">
                     ← Kembali
                 </a>
             </div>
@@ -80,6 +80,7 @@
 
                     <form action="{{ route('instructor.submissions.grade', $submission->id) }}" method="POST">
                         @csrf
+                        @method('PUT')
 
                         @if ($errors->any())
                             <div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
@@ -123,7 +124,7 @@
                                     class="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg transition">
                                 ✓ Simpan Nilai & Feedback
                             </button>
-                            <a href="{{ route('instructor.submissions.list', $submission->assignment->id) }}" 
+                            <a href="{{ route('instructor.submissions', $submission->assignment->id) }}" 
                                class="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition font-medium">
                                 ✕ Batal
                             </a>

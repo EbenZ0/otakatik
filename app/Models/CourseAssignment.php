@@ -38,6 +38,7 @@ class CourseAssignment extends Model
      */
     public function submissions()
     {
-        return $this->hasMany(AssignmentSubmission::class);
+        // assignment submissions table uses 'assignment_id' as foreign key
+        return $this->hasMany(AssignmentSubmission::class, 'assignment_id');
     }
 }

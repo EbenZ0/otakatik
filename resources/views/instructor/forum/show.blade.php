@@ -8,7 +8,7 @@
     <div class="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-6 py-8">
         <div class="max-w-4xl mx-auto">
             <div class="mb-4">
-                <a href="{{ route('instructor.course.detail', $course->id) }}" class="hover:opacity-80">
+                <a href="{{ route('instructor.courses.show', $course->id) }}" class="hover:opacity-80">
                     Kembali
                 </a>
             </div>
@@ -42,10 +42,6 @@
 
             @if(Auth::id() === $forum->user_id || Auth::user()->is_instructor)
             <div class="flex gap-2 pt-4 border-t border-gray-200">
-                <a href="{{ route('instructor.forum.edit', [$course->id, $forum->id]) }}" 
-                   class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm transition">
-                    Edit
-                </a>
                 <form action="{{ route('instructor.forum.destroy', [$course->id, $forum->id]) }}" method="POST" 
                       class="inline" onsubmit="return confirm('Hapus topik ini?')">
                     @csrf
@@ -82,15 +78,11 @@
                         </div>
                     </div>
 
-                    <p class="text-gray-700 whitespace-pre-wrap">{{ $reply->content }}</p>
+                    <p class="text-gray-700 whitespace-pre-wrap">{{ $reply->message }}</p>
 
                     @if(Auth::id() === $reply->user_id || Auth::user()->is_instructor)
                     <div class="flex gap-2 mt-3 pt-3 border-t border-gray-300">
-                        <button type="button" onclick="editReply({{ $reply->id }})" 
-                                class="bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 rounded text-xs transition">
-                            Edit
-                        </button>
-                        <form action="{{ route('instructor.forum.delete-reply', [$course->id, $forum->id, $reply->id]) }}" method="POST" 
+                        <form action="{{ route('instructor.forum.reply.destroy', [$course->id, $forum->id, $reply->id]) }}" method="POST" 
                               class="inline" onsubmit="return confirm('Hapus balasan ini?')">
                             @csrf
                             @method('DELETE')
@@ -111,7 +103,7 @@
         <div class="bg-white rounded-lg border border-gray-200 p-6">
             <h3 class="text-lg font-semibold text-gray-800 mb-4">Berikan Balasan</h3>
 
-            <form action="{{ route('instructor.forum.reply', [$course->id, $forum->id]) }}" method="POST">
+            <form action="{{ route('instructor.forum.reply.store', [$course->id, $forum->id]) }}" method="POST">
                 @csrf
 
                 @if ($errors->any())

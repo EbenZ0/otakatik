@@ -8,7 +8,7 @@
     <div class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-8">
         <div class="max-w-4xl mx-auto">
             <div class="mb-4">
-                <a href="{{ route('instructor.quiz.create', $quiz->id) }}" class="hover:opacity-80">
+                <a href="{{ route('instructor.quiz.edit', [$course->id, $quiz->id]) }}" class="hover:opacity-80">
                     ← Kembali
                 </a>
             </div>
@@ -30,7 +30,7 @@
             </div>
         @endif
 
-        <form action="{{ isset($question) ? route('instructor.quiz.update-question', $question->id) : route('instructor.quiz.add-question', $quiz->id) }}" 
+        <form action="{{ isset($question) ? route('instructor.quiz.question.update', [$course->id, $quiz->id, $question->id]) : route('instructor.quiz.question.add', [$course->id, $quiz->id]) }}" 
               method="POST" id="questionForm">
             @csrf
             @if(isset($question))
@@ -41,9 +41,9 @@
                 <!-- Question Text -->
                 <div class="bg-white rounded-lg border border-gray-200 p-6">
                     <h3 class="text-lg font-semibold text-gray-800 mb-4">📝 Teks Soal</h3>
-                    <textarea name="question_text" required rows="3"
+                    <textarea name="question" required rows="3"
                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                              placeholder="Tulis soal Anda di sini...">{{ old('question_text', $question->question_text ?? '') }}</textarea>
+                              placeholder="Tulis soal Anda di sini...">{{ old('question', $question->question ?? '') }}</textarea>
                 </div>
 
                 <!-- Question Type -->
@@ -91,7 +91,7 @@
                     <h3 class="text-lg font-semibold text-gray-800 mb-4">🔤 Pilihan Jawaban</h3>
                     <div id="optionsContainer" class="space-y-3">
                         @php
-                            $options = old('options', isset($question) ? json_decode($question->options, true) ?? [] : []);
+                            $options = old('options', isset($question) ? ($question->options ?? []) : []);
                         @endphp
                         @forelse($options as $index => $option)
                         <div class="flex items-center gap-3 optionItem">
@@ -142,7 +142,7 @@
                         <p class="text-sm text-gray-600 mb-3">Pilih jawaban yang benar:</p>
                         <div id="correctAnswerOptions" class="space-y-2">
                             @php
-                                $options = old('options', isset($question) ? json_decode($question->options, true) ?? [] : []);
+                                $options = old('options', isset($question) ? ($question->options ?? []) : []);
                                 $correctAnswer = old('correct_answer', $question->correct_answer ?? 0);
                             @endphp
                             @forelse($options as $index => $option)
@@ -195,13 +195,22 @@
                            placeholder="Urutan soal">
                 </div>
 
+                <!-- Question Points -->
+                <div class="bg-white rounded-lg border border-gray-200 p-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">⚖️ Bobot Nilai</h3>
+                    <input type="number" name="points" min="1" max="100"
+                           value="{{ old('points', $question->points ?? 10) }}"
+                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                           placeholder="Nilai untuk soal ini">
+                </div>
+
                 <!-- Submit Buttons -->
                 <div class="flex gap-4 pt-6 border-t border-gray-200">
                     <button type="submit" 
                             class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-6 rounded-lg transition">
                         ✓ {{ isset($question) ? 'Update Soal' : 'Tambah Soal' }}
                     </button>
-                    <a href="{{ route('instructor.quiz.create', $quiz->id) }}" 
+                    <a href="{{ route('instructor.quiz.edit', [$course->id, $quiz->id]) }}" 
                        class="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition font-medium">
                         ✕ Batal
                     </a>

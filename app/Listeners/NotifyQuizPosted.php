@@ -18,8 +18,7 @@ class NotifyQuizPosted
         }
 
         // Get all enrolled students in this course
-        $enrolledStudents = $course->courseRegistrations()
-            ->where('status', 'paid')
+        $enrolledStudents = $course->activeRegistrations()
             ->pluck('user_id')
             ->toArray();
 

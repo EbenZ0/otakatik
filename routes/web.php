@@ -96,6 +96,7 @@ Route::middleware(['auth', 'instructor'])->prefix('instructor')->name('instructo
     Route::put('/assignments/{id}', [InstructorController::class, 'updateAssignment'])->name('assignments.update');
     Route::delete('/assignments/{id}', [InstructorController::class, 'deleteAssignment'])->name('assignments.delete');
     Route::get('/assignments/{id}/submissions', [InstructorController::class, 'assignmentSubmissions'])->name('submissions');
+    Route::get('/assignments/{assignmentId}/submissions/{submissionId}', [InstructorController::class, 'submissionDetail'])->name('submissions.detail');
     Route::put('/submissions/{id}/grade', [InstructorController::class, 'gradeSubmission'])->name('submissions.grade');
     Route::put('/students/{id}/progress', [InstructorController::class, 'updateStudentProgress'])->name('students.progress');
     
@@ -104,6 +105,8 @@ Route::middleware(['auth', 'instructor'])->prefix('instructor')->name('instructo
         Route::post('/', [InstructorController::class, 'storeForum'])->name('store');
         Route::get('/{forumId}', [InstructorController::class, 'showForum'])->name('show');
         Route::delete('/{forumId}', [InstructorController::class, 'deleteForum'])->name('destroy');
+        Route::post('/{forumId}/reply', [InstructorController::class, 'storeForumReply'])->name('reply.store');
+        Route::delete('/{forumId}/reply/{replyId}', [InstructorController::class, 'deleteForumReply'])->name('reply.destroy');
     });
     
     // Quiz Routes (Instructor)
@@ -114,6 +117,8 @@ Route::middleware(['auth', 'instructor'])->prefix('instructor')->name('instructo
         Route::get('/{quizId}/edit', [QuizController::class, 'edit'])->name('edit');
         Route::put('/{quizId}', [QuizController::class, 'update'])->name('update');
         Route::delete('/{quizId}', [QuizController::class, 'destroy'])->name('destroy');
+        Route::get('/{quizId}/questions/create', [QuizController::class, 'createQuestion'])->name('question.create');
+        Route::get('/{quizId}/questions/{questionId}/edit', [QuizController::class, 'editQuestion'])->name('question.edit');
         Route::post('/{quizId}/questions', [QuizController::class, 'addQuestion'])->name('question.add');
         Route::put('/{quizId}/questions/{questionId}', [QuizController::class, 'updateQuestion'])->name('question.update');
         Route::delete('/{quizId}/questions/{questionId}', [QuizController::class, 'deleteQuestion'])->name('question.delete');

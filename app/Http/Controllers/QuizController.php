@@ -11,6 +11,8 @@ use App\Events\QuizPosted;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 
 class QuizController extends Controller
 {
@@ -182,6 +184,37 @@ class QuizController extends Controller
     }
 
     /**
+     * Show form for creating question
+     */
+    public function createQuestion($courseId, $quizId)
+    {
+        $course = Course::findOrFail($courseId);
+        $quiz = Quiz::findOrFail($quizId);
+
+        if ($course->instructor_id !== Auth::id() || $quiz->course_id !== $course->id) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        return view('instructor.quiz.add-question', compact('course', 'quiz'));
+    }
+
+    /**
+     * Show form for editing question
+     */
+    public function editQuestion($courseId, $quizId, $questionId)
+    {
+        $course = Course::findOrFail($courseId);
+        $quiz = Quiz::findOrFail($quizId);
+        $question = QuizQuestion::findOrFail($questionId);
+
+        if ($course->instructor_id !== Auth::id() || $quiz->course_id !== $course->id || $question->quiz_id !== $quiz->id) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        return view('instructor.quiz.add-question', compact('course', 'quiz', 'question'));
+    }
+
+    /**
      * Add question to quiz (Instructor)
      */
     public function addQuestion(Request $request, $courseId, $quizId)
@@ -199,31 +232,29 @@ class QuizController extends Controller
 
         $validated = $request->validate([
             'question' => 'required|string',
-            'question_type' => 'required|in:multiple_choice,true_false,essay',
-            'options' => 'required_if:question_type,multiple_choice|json',
-            'correct_answer' => 'required|string',
-            'points' => 'required|integer|min:1|max:100'
+            'question_type' => ['required', Rule::in(['multiple_choice', 'true_false', 'essay'])],
+            'options' => 'nullable|array',
+            'options.*' => 'nullable|string|max:255',
+            'correct_answer' => 'nullable',
+            'points' => 'required|integer|min:1|max:100',
+            'order' => 'nullable|integer|min:1',
         ]);
 
-        $orderNumber = $quiz->questions()->count() + 1;
+        [$options, $correctAnswer] = $this->prepareQuestionPayload($validated);
 
         $question = QuizQuestion::create([
             'quiz_id' => $quiz->id,
             'question' => $validated['question'],
             'question_type' => $validated['question_type'],
-            'options' => $validated['question_type'] === 'multiple_choice' 
-                ? json_decode($validated['options'], true) 
-                : null,
-            'correct_answer' => $validated['correct_answer'],
+            'options' => $options,
+            'correct_answer' => $correctAnswer,
             'points' => $validated['points'],
-            'order' => $orderNumber
+            'order' => $validated['order'] ?? ($quiz->questions()->count() + 1),
         ]);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Soal berhasil ditambahkan!',
-            'question' => $question
-        ]);
+        return redirect()
+            ->route('instructor.quiz.edit', [$courseId, $quizId])
+            ->with('success', 'Soal berhasil ditambahkan!');
     }
 
     /**
@@ -245,27 +276,28 @@ class QuizController extends Controller
 
         $validated = $request->validate([
             'question' => 'required|string',
-            'question_type' => 'required|in:multiple_choice,true_false,essay',
-            'options' => 'required_if:question_type,multiple_choice|json',
-            'correct_answer' => 'required|string',
-            'points' => 'required|integer|min:1|max:100'
+            'question_type' => ['required', Rule::in(['multiple_choice', 'true_false', 'essay'])],
+            'options' => 'nullable|array',
+            'options.*' => 'nullable|string|max:255',
+            'correct_answer' => 'nullable',
+            'points' => 'required|integer|min:1|max:100',
+            'order' => 'nullable|integer|min:1',
         ]);
+
+        [$options, $correctAnswer] = $this->prepareQuestionPayload($validated);
 
         $question->update([
             'question' => $validated['question'],
             'question_type' => $validated['question_type'],
-            'options' => $validated['question_type'] === 'multiple_choice' 
-                ? json_decode($validated['options'], true) 
-                : null,
-            'correct_answer' => $validated['correct_answer'],
-            'points' => $validated['points']
+            'options' => $options,
+            'correct_answer' => $correctAnswer,
+            'points' => $validated['points'],
+            'order' => $validated['order'] ?? $question->order,
         ]);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Soal berhasil diupdate!',
-            'question' => $question
-        ]);
+        return redirect()
+            ->route('instructor.quiz.edit', [$courseId, $quizId])
+            ->with('success', 'Soal berhasil diupdate!');
     }
 
     /**
@@ -287,7 +319,57 @@ class QuizController extends Controller
 
         $question->delete();
 
-        return response()->json(['success' => true, 'message' => 'Soal berhasil dihapus!']);
+        $question->delete();
+
+        return redirect()
+            ->route('instructor.quiz.edit', [$courseId, $quizId])
+            ->with('success', 'Soal berhasil dihapus!');
+    }
+
+    /**
+     * Normalize options & correct answers for multiple question types
+     */
+    private function prepareQuestionPayload(array $validated): array
+    {
+        $type = $validated['question_type'];
+        $options = null;
+        $correctAnswer = null;
+
+        if ($type === 'multiple_choice') {
+            $options = collect($validated['options'] ?? [])
+                ->map(fn ($option) => $option !== null ? trim($option) : null)
+                ->filter(fn ($option) => $option !== null && $option !== '')
+                ->values()
+                ->all();
+
+            if (count($options) < 2) {
+                throw ValidationException::withMessages([
+                    'options' => 'Tambahkan minimal dua pilihan untuk soal pilihan ganda.',
+                ]);
+            }
+
+            $selectedIndex = (int) ($validated['correct_answer'] ?? 0);
+
+            if (!array_key_exists($selectedIndex, $options)) {
+                throw ValidationException::withMessages([
+                    'correct_answer' => 'Pilih jawaban benar yang valid.',
+                ]);
+            }
+
+            $correctAnswer = $selectedIndex;
+        } elseif ($type === 'true_false') {
+            $value = $validated['correct_answer'];
+
+            if (!in_array($value, ['true', 'false'], true)) {
+                throw ValidationException::withMessages([
+                    'correct_answer' => 'Pilih Benar atau Salah sebagai jawaban.',
+                ]);
+            }
+
+            $correctAnswer = $value;
+        }
+
+        return [$options, $correctAnswer];
     }
 
     /**
