@@ -5,15 +5,16 @@
 @section('content')
 <div class="bg-white">
     <!-- Header -->
-    <div class="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-6 py-8">
+    <div class="bg-gradient-to-r from-blue-600 via-purple-600 to-orange-500 text-white px-6 py-12">
         <div class="max-w-4xl mx-auto">
-            <div class="mb-4">
-                <a href="{{ route('student.dashboard') }}" class="hover:opacity-80">
-                    Kembali
+            <div class="mb-6 flex items-center gap-3">
+                <a href="{{ route('student.dashboard') }}" class="inline-flex items-center gap-2 bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg transition-all backdrop-blur">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Kembali</span>
                 </a>
             </div>
-            <h1 class="text-3xl font-bold mb-2">Profil Saya</h1>
-            <p class="text-purple-100">Kelola informasi pribadi dan preferensi Anda</p>
+            <h1 class="text-4xl font-bold mb-2">Profil Saya</h1>
+            <p class="text-blue-50 text-lg">Kelola informasi pribadi dan preferensi Anda dengan mudah</p>
         </div>
     </div>
 
@@ -26,7 +27,10 @@
                     <!-- Profile Picture -->
                     <div class="bg-white rounded-lg border border-gray-200 p-6 text-center mb-4">
                         <div class="mb-4">
-                            @if($user->profile_picture)
+                            @php
+                                $hasProfilePicture = $user->profile_picture && Storage::disk('public')->exists($user->profile_picture);
+                            @endphp
+                            @if($hasProfilePicture)
                                 <img src="{{ Storage::url($user->profile_picture) }}" alt="{{ $user->name }}" 
                                      class="w-32 h-32 rounded-full mx-auto object-cover border-4 border-purple-200">
                             @else
@@ -164,7 +168,7 @@
                             
                             <div class="space-y-4">
                                 <!-- Current Picture Preview -->
-                                @if($user->profile_picture)
+                                @if($user->profile_picture && Storage::exists($user->profile_picture))
                                 <div class="mb-4">
                                     <p class="text-sm text-gray-600 mb-2">Foto Saat Ini:</p>
                                     <div class="bg-gray-100 rounded-lg p-4 flex items-center gap-4">
@@ -172,7 +176,7 @@
                                              class="w-16 h-16 rounded-full object-cover">
                                         <div class="flex-1">
                                             <p class="text-sm font-medium text-gray-800">{{ basename($user->profile_picture) }}</p>
-                                            <p class="text-xs text-gray-600">Ukuran: ~{{ Storage::size($user->profile_picture) / 1024 }}KB</p>
+                                            <p class="text-xs text-gray-600">Ukuran: ~{{ number_format(Storage::size($user->profile_picture) / 1024, 2) }}KB</p>
                                         </div>
                                     </div>
                                 </div>

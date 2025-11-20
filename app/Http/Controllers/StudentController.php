@@ -7,6 +7,7 @@ use App\Models\Course;
 use App\Models\Refund;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class StudentController extends Controller
 {
@@ -83,16 +84,16 @@ class StudentController extends Controller
             'phone' => 'nullable|string|max:20',
             'location' => 'nullable|string|max:255',
             'date_of_birth' => 'nullable|date|before:today',
-            'education_level' => 'nullable|string|in:High School,Bachelor,Master,Doctorate,Other',
+            'education_level' => 'nullable|string|in:SMA,Diploma,Bachelor,Master,Doctorate,Other',
             'education_name' => 'nullable|string|max:255',
             'bio' => 'nullable|string|max:1000',
-            'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
         ]);
 
         if ($request->hasFile('profile_picture')) {
             // Delete old picture if exists
-            if ($user->profile_picture) {
-                \Illuminate\Support\Facades\Storage::disk('public')->delete($user->profile_picture);
+            if ($user->profile_picture && Storage::disk('public')->exists($user->profile_picture)) {
+                Storage::disk('public')->delete($user->profile_picture);
             }
             $path = $request->file('profile_picture')->store('profiles', 'public');
             $validated['profile_picture'] = $path;
@@ -204,5 +205,20 @@ class StudentController extends Controller
             ->firstOrFail();
 
         return view('student.assignment-view', compact('assignment', 'submission'));
+    }
+
+    /**
+     * View forum discussions for a course
+     */
+    public function forumIndex($courseId)
+    {
+        // Get all forum discussions for the course
+        $forums = \App\Models\CourseForum::where('course_id', $courseId)
+            ->with(['user', 'replies.user'])
+            ->orderBy('is_pinned', 'desc')
+            ->orderBy('created_at', 'desc')
+            ->get();
+        
+        return view('student.forum-index', compact('courseId', 'forums'));
     }
 }

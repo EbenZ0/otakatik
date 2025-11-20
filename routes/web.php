@@ -93,6 +93,7 @@ Route::middleware(['auth', 'instructor'])->prefix('instructor')->name('instructo
     Route::post('/courses/{id}/materials', [InstructorController::class, 'storeMaterial'])->name('materials.store');
     Route::delete('/materials/{id}', [InstructorController::class, 'deleteMaterial'])->name('materials.delete');
     Route::post('/courses/{id}/assignments', [InstructorController::class, 'storeAssignment'])->name('assignments.store');
+    Route::get('/assignments/{id}/json', [InstructorController::class, 'getAssignmentJson'])->name('assignments.json');
     Route::put('/assignments/{id}', [InstructorController::class, 'updateAssignment'])->name('assignments.update');
     Route::delete('/assignments/{id}', [InstructorController::class, 'deleteAssignment'])->name('assignments.delete');
     Route::get('/assignments/{id}/submissions', [InstructorController::class, 'assignmentSubmissions'])->name('submissions');
@@ -138,6 +139,11 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/student/profile', [StudentController::class, 'profile'])->name('student.profile');
     Route::post('/student/profile/update', [StudentController::class, 'updateProfile'])->name('student.profile.update');
     
+    // Forum Routes (Student)
+    Route::prefix('student/course/{courseId}/forum')->name('student.forum.')->group(function () {
+        Route::get('/', [StudentController::class, 'forumIndex'])->name('index');
+    });
+    
     // Quiz Routes (Student)
     Route::prefix('student/course/{courseId}/quiz')->name('student.quiz.')->group(function () {
         Route::get('/', [QuizController::class, 'studentQuizzes'])->name('index');
@@ -161,7 +167,3 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/view/{id}', [RefundController::class, 'view'])->name('view');
     });
 });
-
-
-
-Route::post('/course/register', [CourseRegistrationController::class, 'register'])->name('course.register')->middleware('auth');

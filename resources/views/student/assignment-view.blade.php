@@ -31,7 +31,7 @@
                         </div>
                         <div>
                             <p class="text-sm text-gray-600">Status:</p>
-                            @if($submission->score !== null)
+                            @if($submission->grade !== null)
                                 <p><span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">✓ Sudah Dinilai</span></p>
                             @else
                                 <p><span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm">⏳ Menunggu Penilaian</span></p>
@@ -68,14 +68,14 @@
                 @endif
 
                 <!-- Feedback/Grading -->
-                @if($submission->score !== null)
+                @if($submission->grade !== null)
                 <div class="bg-green-50 rounded-lg border border-green-200 p-6">
                     <h3 class="font-semibold text-lg mb-4">✓ Penilaian</h3>
                     
                     <div class="grid grid-cols-2 gap-4 mb-6">
                         <div class="bg-white rounded-lg p-4 text-center">
                             <p class="text-gray-600 text-sm">Skor Anda</p>
-                            <p class="text-4xl font-bold text-green-600">{{ $submission->score }}</p>
+                            <p class="text-4xl font-bold text-green-600">{{ $submission->grade }}</p>
                             <p class="text-sm text-gray-600">dari 100</p>
                         </div>
                         <div class="bg-white rounded-lg p-4">

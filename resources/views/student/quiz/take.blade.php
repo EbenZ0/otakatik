@@ -16,7 +16,7 @@
                     </div>
                     <div class="text-right">
                         <p class="text-sm text-gray-600 mb-1">Sisa Waktu</p>
-                        <div id="timer" class="text-4xl font-bold text-blue-600">{{ $quiz->time_limit }}:00</div>
+                        <div id="timer" class="text-4xl font-bold text-blue-600">{{ $quiz->duration_minutes }}:00</div>
                     </div>
                 </div>
                 <div class="w-full bg-gray-200 rounded-full h-2">
@@ -26,7 +26,7 @@
             </div>
 
             <!-- Questions Form -->
-            <form action="{{ route('student.quiz.submit', $quiz->id) }}" method="POST" id="quizForm">
+            <form action="{{ route('student.quiz.submit', [$course->id, $quiz->id, $submission->id]) }}" method="POST" id="quizForm">
                 @csrf
 
                 @foreach($quiz->questions()->orderBy('order')->get() as $index => $question)
@@ -109,7 +109,7 @@
 <script>
     let currentQuestion = 0;
     const totalQuestions = document.querySelectorAll('.question-container').length;
-    const timeLimit = {{ $quiz->time_limit }} * 60; // Convert to seconds
+    const timeLimit = {{ $quiz->duration_minutes }} * 60; // Convert to seconds
     let timeRemaining = timeLimit;
 
     // Show first question

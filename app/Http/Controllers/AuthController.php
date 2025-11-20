@@ -89,7 +89,7 @@ class AuthController extends Controller
      */
     public function logout(Request $request)
     {
-        $userName = Auth::user()->name;
+        $userName = Auth::user()?->name ?? 'User';
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();

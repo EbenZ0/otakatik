@@ -98,9 +98,10 @@
                                     </div>
                                     
                                     @if($isEnrolled)
-                                    <button class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-all flex items-center gap-2">
+                                    <a href="{{ route('student.assignment.submit.form', $assignment->id) }}" 
+                                       class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-all inline-flex items-center gap-2">
                                         <i class="fas fa-upload"></i> Submit Assignment
-                                    </button>
+                                    </a>
                                     @else
                                     <p class="text-gray-500 text-sm">Enroll to submit assignments</p>
                                     @endif

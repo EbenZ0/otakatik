@@ -1,146 +1,149 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - OtakAtik Academy</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-fade-in {
-            animation: fadeIn 0.6s ease-out;
-        }
-        .shadow-custom {
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        }
-    </style>
-</head>
-<body class="bg-gray-50">
-    
-    @auth
-        @include('components.navbar')
-    @else
-        <!-- Navbar untuk guest -->
-        <nav class="bg-white shadow-md fixed w-full top-0 z-50">
-            <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-                <!-- Logo -->
-                <div class="flex items-center gap-2">
-                    <div class="w-8 h-8 bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg flex items-center justify-center">
-                        <span class="text-white font-bold text-lg">O</span>
-                    </div>
-                    <span class="text-xl font-bold text-gray-800">OtakAtik</span>
-                </div>
-                
-                <!-- Menu -->
-                <div class="hidden md:flex items-center gap-8">
-                    <a href="#about" class="text-gray-700 hover:text-orange-500 font-medium transition">About Us</a>
-                    <a href="/course" class="text-gray-700 hover:text-orange-500 font-medium transition">Our Course</a>
-                </div>
-                
-                <!-- Sign In Button -->
-                <a href="/login" class="bg-orange-500 hover:bg-orange-600 text-white font-bold px-6 py-2.5 rounded-lg transition-all hover:scale-105 shadow-lg">
-                    Sign In
-                </a>
-            </div>
-        </nav>
-    @endauth
+@extends('layouts.app')
 
+@section('title', 'Dashboard - OtakAtik Academy')
+
+@section('content')
+<div class="w-full bg-white">
     <!-- Hero Section -->
-    <section class="pt-32 pb-20 px-6 bg-gradient-to-b from-white to-gray-50">
-        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-12">
-            <div class="md:w-1/2 animate-fade-in">
-                <h1 class="text-5xl font-bold text-gray-800 mb-4 leading-tight">
-                    Welcome To<br>
-                    <span class="text-orange-500">OtakAtik Acandemy</span> by PNJ
-                </h1>
-                <p class="text-gray-600 text-lg mb-8 leading-relaxed">
-                    Kini program otak-atik ini hadir lho, untuk putra-putrimu dibuat yang merancang masa depan!
-                </p>
-                <a href="/course" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-8 py-4 rounded-lg transition-all hover:scale-105 shadow-lg inline-block">
-                    Start Learning Now
+    <section class="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-20 px-6">
+        <div class="max-w-6xl mx-auto text-center">
+            <h1 class="text-5xl font-bold mb-6">Selamat Datang di OtakAtik Academy</h1>
+            <p class="text-2xl text-blue-100 mb-8">Platform Pembelajaran Online Terpercaya di Indonesia</p>
+            <div class="flex gap-4 justify-center">
+                <a href="/course" class="bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-8 rounded-lg inline-block transition duration-300">
+                    Jelajahi Course
                 </a>
-            </div>
-            <div class="md:w-1/2 animate-fade-in">
-                <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=600&h=400&fit=crop" 
-                     alt="Students Learning" 
-                     class="rounded-2xl shadow-custom w-full">
-            </div>
-        </div>
-    </section>
-
-    <!-- The Story Section -->
-    <section id="about" class="py-20 px-6 bg-gradient-to-br from-orange-500 to-orange-600 text-white">
-        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-12">
-            <div class="md:w-1/2">
-                <h2 class="text-4xl font-bold mb-6">THE STORY</h2>
-                <p class="text-white/90 text-lg leading-relaxed mb-4">
-                    OtakAtik lahir dari kegelisahan kami ini, bahwa dari pengalaman kami yang cukup panjang dalam mengajar bimbel, banyak anak yang memiliki potensi namun terkendala oleh tiga hal yang menghambat proses belajarnya.
-                </p>
-                <p class="text-white/90 text-lg leading-relaxed mb-4">
-                    Pertama, tidak paham konsep dasar pelajaran. Kedua, tidak terbiasa dengan soal-soal yang menantang yang melatih logika berpikir. Ketiga, mudah menyerah saat menghadapi soal yang menantang, atau bisa dikatakan tidak terbiasa dengan soal level olimpiade.
-                </p>
-                <p class="text-white/90 text-lg leading-relaxed">
-                    Tiga masalah inilah yang menurut saya membuat anak-anak ini tidak optimal dalam mengeksplorasi potensinya. Hal ini tentu juga berdampak pada masa depannya kelak.
-                </p>
-            </div>
-            <div class="md:w-1/2">
-                <img src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=500&h=600&fit=crop" 
-                     alt="Student" 
-                     class="rounded-2xl shadow-2xl w-full">
-            </div>
-        </div>
-    </section>
-
-    <!-- Become The Best Section -->
-    <section class="py-20 px-6 bg-white">
-        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-12">
-            <div class="md:w-1/2">
-                <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=600&h=400&fit=crop" 
-                     alt="Students in Class" 
-                     class="rounded-2xl shadow-custom w-full">
-            </div>
-            <div class="md:w-1/2">
-                <h2 class="text-4xl font-bold text-gray-800 mb-6">
-                    Become The Best<br>Student In Class
-                </h2>
-                <p class="text-gray-600 text-lg leading-relaxed mb-6">
-                    YUK BELAJAR dengan OtakAtik Academy juga mulai menangani keternak-malas, kelik suka membuang-buang waktu, bahkan anak yang tidak percaya diri.
-                </p>
-                <a href="/course" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-8 py-4 rounded-lg transition-all hover:scale-105 shadow-lg inline-block">
-                    Start Now!
+                <a href="#features" class="bg-white hover:bg-gray-100 text-blue-600 font-bold py-3 px-8 rounded-lg inline-block transition duration-300">
+                    Pelajari Lebih Lanjut
                 </a>
             </div>
         </div>
     </section>
 
-    <!-- Kenapa Harus Belajar Section -->
-    <section class="py-20 px-6 bg-gradient-to-br from-blue-700 to-blue-900 text-white">
-        <div class="max-w-7xl mx-auto">
-            <div class="text-center md:text-left mb-12">
-                <h2 class="text-4xl font-bold mb-6">
-                    Kenapa Harus Belajar Di<br>OtakAtik Academy?
-                </h2>
-                <div class="flex flex-col md:flex-row gap-12 items-center">
-                    <div class="md:w-1/2">
-                        <p class="text-white/90 text-lg leading-relaxed mb-6">
-                            OtakAtik hadir dengan pelajaran Matematika dan IPA yang didesign sedemikian rupa untuk anak-anak yang dirasa memiliki potensi nilai tingkat nilai yang bisa digali dan diasah. Tentu dengan bimbingan dari pengajar yang expert dan berpengalaman, Karena di OtakAtik kamu terbiasa dengan konsep dan soal level olimpiade sejak dini, saat SMA nanti OtakAtik pun yakin anak-anak ini juga tidak akan kesulitan dalam mengerjakan soal olimpiade bahkan soal level PTS/OSN/INSO. Ini peningkatan keren yang bisa kami berikan ke anak-anak kalian.
-                        </p>
+    <!-- Features Section -->
+    <section id="features" class="py-20 px-6 bg-gray-50">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="text-4xl font-bold text-center mb-16 text-gray-800">Mengapa Memilih OtakAtik?</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Feature 1 -->
+                <div class="bg-white rounded-xl shadow-lg p-8 text-center hover:shadow-xl transition duration-300">
+                    <div class="w-20 h-20 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <svg class="w-10 h-10 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
                     </div>
-                    <div class="md:w-1/2 flex gap-4">
-                        <img src="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=300&h=200&fit=crop" 
-                             alt="Teacher" 
-                             class="rounded-xl shadow-xl w-1/2">
-                        <div class="flex flex-col gap-4 w-1/2">
-                            <img src="https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?w=300&h=150&fit=crop" 
-                                 alt="Students" 
-                                 class="rounded-xl shadow-xl">
-                            <img src="https://images.unsplash.com/photo-1509062522246-3755977927d7?w=300&h=150&fit=crop" 
-                                 alt="Classroom" 
-                                 class="rounded-xl shadow-xl">
-                        </div>
+                    <h3 class="text-2xl font-bold text-gray-800 mb-3">Belajar Fleksibel</h3>
+                    <p class="text-gray-600 leading-relaxed">Akses materi pembelajaran kapan saja dan di mana saja sesuai dengan jadwal Anda</p>
+                </div>
+
+                <!-- Feature 2 -->
+                <div class="bg-white rounded-xl shadow-lg p-8 text-center hover:shadow-xl transition duration-300">
+                    <div class="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <svg class="w-10 h-10 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-800 mb-3">Materi Interaktif</h3>
+                    <p class="text-gray-600 leading-relaxed">Video pembelajaran, kuis interaktif, dan soal-soal latihan yang menarik</p>
+                </div>
+
+                <!-- Feature 3 -->
+                <div class="bg-white rounded-xl shadow-lg p-8 text-center hover:shadow-xl transition duration-300">
+                    <div class="w-20 h-20 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <svg class="w-10 h-10 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-800 mb-3">Instruktur Berpengalaman</h3>
+                    <p class="text-gray-600 leading-relaxed">Dipandu oleh instruktur profesional yang berpengalaman di bidangnya</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="py-20 px-6 bg-white">
+        <div class="max-w-6xl mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                <div>
+                    <h2 class="text-4xl font-bold text-gray-800 mb-6">Tentang OtakAtik Academy</h2>
+                    <p class="text-lg text-gray-700 mb-4 leading-relaxed">
+                        OtakAtik Academy adalah platform pembelajaran online terpercaya yang dirancang khusus untuk membantu pelajar Indonesia mengembangkan potensi akademik mereka.
+                    </p>
+                    <p class="text-lg text-gray-700 mb-4 leading-relaxed">
+                        Kami menyediakan kursus berkualitas tinggi dalam Matematika dan IPA dengan metode pengajaran yang inovatif, interaktif, dan menyenangkan.
+                    </p>
+                    <p class="text-lg text-gray-700 leading-relaxed">
+                        Dengan bimbingan dari instruktur berpengalaman, kami berkomitmen untuk membantu setiap siswa mencapai prestasi akademik tertinggi dan mengembangkan kemampuan berpikir logis.
+                    </p>
+                </div>
+                <div class="bg-gradient-to-br from-blue-500 via-blue-600 to-orange-500 rounded-2xl h-96 shadow-xl flex items-center justify-center">
+                    <div class="text-center text-white">
+                        <svg class="w-32 h-32 mx-auto mb-4 opacity-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path>
+                        </svg>
+                        <p class="text-2xl font-bold">Belajar Cerdas</p>
+                        <p class="text-blue-100 mt-2">Investasi Terbaik Untuk Masa Depan</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Statistics Section -->
+    <section class="py-20 px-6 bg-gradient-to-r from-blue-600 to-blue-800 text-white">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="text-4xl font-bold text-center mb-12">Statistik OtakAtik Academy</h2>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div class="text-center">
+                    <div class="text-5xl font-bold mb-2">1000+</div>
+                    <p class="text-xl text-blue-100">Siswa Aktif</p>
+                </div>
+                <div class="text-center">
+                    <div class="text-5xl font-bold mb-2">50+</div>
+                    <p class="text-xl text-blue-100">Course Tersedia</p>
+                </div>
+                <div class="text-center">
+                    <div class="text-5xl font-bold mb-2">95%</div>
+                    <p class="text-xl text-blue-100">Kepuasan Siswa</p>
+                </div>
+                <div class="text-center">
+                    <div class="text-5xl font-bold mb-2">24/7</div>
+                    <p class="text-xl text-blue-100">Support Tersedia</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Courses Preview Section -->
+    <section class="py-20 px-6 bg-gray-50">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="text-4xl font-bold text-center mb-12 text-gray-800">Kategori Course Kami</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Course Category 1 -->
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition duration-300">
+                    <div class="bg-gradient-to-r from-blue-500 to-blue-600 h-32 flex items-center justify-center">
+                        <svg class="w-16 h-16 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                        </svg>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-2">Matematika</h3>
+                        <p class="text-gray-600 mb-4">Kuasai konsep matematika dari dasar hingga tingkat olimpiade dengan metode pembelajaran yang interaktif dan menyenangkan.</p>
+                        <a href="/course" class="text-blue-600 font-bold hover:text-blue-800">Lihat Course →</a>
+                    </div>
+                </div>
+
+                <!-- Course Category 2 -->
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition duration-300">
+                    <div class="bg-gradient-to-r from-orange-500 to-orange-600 h-32 flex items-center justify-center">
+                        <div class="text-5xl">🔬</div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-2">IPA (Sains)</h3>
+                        <p class="text-gray-600 mb-4">Jelajahi dunia sains dengan eksperimen virtual, visualisasi 3D, dan soal-soal aplikatif yang mendorong pemahaman mendalam.</p>
+                        <a href="/course" class="text-blue-600 font-bold hover:text-blue-800">Lihat Course →</a>
                     </div>
                 </div>
             </div>
@@ -150,29 +153,40 @@
     <!-- CTA Section -->
     <section class="py-20 px-6 bg-white">
         <div class="max-w-4xl mx-auto text-center">
-            <h2 class="text-4xl font-bold text-gray-800 mb-4">Tunggu apalagi?</h2>
-            <p class="text-2xl text-gray-700 mb-8">
-                Saatnya upgrade skill bareng<br><span class="font-bold">OtakAtik.</span>
-            </p>
-            <a href="/course" class="bg-orange-500 hover:bg-orange-600 text-white font-bold px-12 py-4 rounded-lg transition-all hover:scale-105 shadow-lg text-lg inline-block">
-                Join Now!
+            <h2 class="text-4xl font-bold text-gray-800 mb-6">Siap Memulai Perjalanan Belajar?</h2>
+            <p class="text-xl text-gray-600 mb-8">Bergabunglah dengan ribuan siswa yang telah merasakan manfaat belajar bersama OtakAtik Academy</p>
+            <a href="/course" class="bg-orange-500 hover:bg-orange-600 text-white font-bold py-4 px-12 rounded-lg inline-block text-lg transition duration-300 shadow-lg">
+                Mulai Belajar Sekarang
             </a>
         </div>
     </section>
 
     <!-- Footer -->
     <footer class="bg-gray-800 text-white py-12 px-6">
-        <div class="max-w-7xl mx-auto text-center">
-            <div class="flex items-center justify-center gap-2 mb-4">
-                <div class="w-10 h-10 bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg flex items-center justify-center">
-                    <span class="text-white font-bold text-xl">O</span>
+        <div class="max-w-6xl mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+                <div>
+                    <h3 class="text-xl font-bold mb-4">OtakAtik Academy</h3>
+                    <p class="text-gray-400">Platform pembelajaran online terpercaya untuk pelajar Indonesia</p>
                 </div>
-                <span class="text-2xl font-bold">OtakAtik Academy</span>
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Navigasi</h3>
+                    <ul class="text-gray-400 space-y-2">
+                        <li><a href="/course" class="hover:text-white transition">Course</a></li>
+                        <li><a href="/dashboard" class="hover:text-white transition">Dashboard</a></li>
+                        <li><a href="#" class="hover:text-white transition">Tentang Kami</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Hubungi Kami</h3>
+                    <p class="text-gray-400">Email: info@otakatik.com</p>
+                    <p class="text-gray-400">WhatsApp: +62 (0) 000-000-0000</p>
+                </div>
             </div>
-            <p class="text-gray-400 mb-4">Membentuk Generasi Cerdas dan Berprestasi</p>
-            <p class="text-gray-500 text-sm">&copy; 2025 OtakAtik Academy. All rights reserved.</p>
+            <div class="border-t border-gray-700 pt-8 text-center">
+                <p class="text-gray-500">&copy; 2025 OtakAtik Academy. Semua hak cipta dilindungi.</p>
+            </div>
         </div>
     </footer>
-
-</body>
-</html>
+</div>
+@endsection

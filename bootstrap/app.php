@@ -39,6 +39,9 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->api(prepend: [
             Illuminate\Routing\Middleware\ThrottleRequests::class.':api',
             Illuminate\Routing\Middleware\SubstituteBindings::class,
+            Illuminate\Session\Middleware\StartSession::class,
+            Illuminate\Cookie\Middleware\EncryptCookies::class,
+            Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

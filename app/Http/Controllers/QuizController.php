@@ -95,8 +95,8 @@ class QuizController extends Controller
             'description' => $validated['description'],
             'duration_minutes' => $validated['duration_minutes'],
             'passing_score' => $validated['passing_score'],
-            'available_from' => $validated['available_from'],
-            'available_until' => $validated['available_until'],
+            'available_from' => $validated['available_from'] ?? null,
+            'available_until' => $validated['available_until'] ?? null,
             'is_published' => $validated['is_published'] ?? false
         ]);
 

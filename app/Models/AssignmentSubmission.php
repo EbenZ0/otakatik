@@ -17,11 +17,14 @@ class AssignmentSubmission extends Model
         'submission_text',
         'submitted_at',
         'grade',
-        'feedback'
+        'feedback',
+        'status',
+        'graded_at'
     ];
 
     protected $casts = [
         'submitted_at' => 'datetime',
+        'graded_at' => 'datetime',
         'grade' => 'decimal:2'
     ];
 

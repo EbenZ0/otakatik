@@ -691,7 +691,12 @@
         function editAssignment(assignmentId) {
             // Fetch assignment data
             fetch(`/api/assignments/${assignmentId}`)
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
                 .then(data => {
                     // Populate form fields
                     document.getElementById('editTitle').value = data.title;
@@ -714,7 +719,7 @@
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    alert('Failed to load assignment details');
+                    alert('Failed to load assignment details: ' + error.message);
                 });
         }
 

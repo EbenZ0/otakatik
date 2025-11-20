@@ -60,6 +60,14 @@ class CourseRegistration extends Model
     }
 
     /**
+     * Get the refund for this registration.
+     */
+    public function refund()
+    {
+        return $this->hasOne(Refund::class, 'course_registration_id');
+    }
+
+    /**
      * Get formatted price attribute.
      */
     public function getFormattedPriceAttribute(): string

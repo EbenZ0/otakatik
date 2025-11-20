@@ -168,31 +168,34 @@ class CourseController extends Controller
     /**
  * Show course details - HANYA COURSE AKTIF untuk STUDENT
  */
-public function show($id)
-{
-    // Jika user adalah INSTRUCTOR, redirect ke dashboard instructor
-    if (Auth::check() && Auth::user()->is_instructor) {
-        return redirect()->route('instructor.courses.show', $id);
-    }
+    public function show($id)
+    {
+        // Jika user adalah INSTRUCTOR, redirect ke dashboard instructor
+        if (Auth::check() && Auth::user()->is_instructor) {
+            return redirect()->route('instructor.courses.show', $id);
+        }
 
-    $course = Course::where('is_active', true)->with(['instructor', 'materials', 'assignments'])->findOrFail($id);
-    
-    // Check if user is enrolled in this course
-    $isEnrolled = false;
-    $userRegistration = null;
-    
-    if (Auth::check()) {
-        $userRegistration = CourseRegistration::where('user_id', Auth::id())
-            ->where('course_id', $id)
-            ->where('status', 'paid')
-            ->first();
-        $isEnrolled = !is_null($userRegistration);
-    }
+        $course = Course::where('is_active', true)->with(['instructor', 'materials', 'assignments'])->findOrFail($id);
+        
+        // Check if user is enrolled in this course
+        $isEnrolled = false;
+        $userRegistration = null;
+        
+        if (Auth::check()) {
+            $userRegistration = CourseRegistration::where('user_id', Auth::id())
+                ->where('course_id', $id)
+                ->where('status', 'paid')
+                ->first();
+            $isEnrolled = !is_null($userRegistration);
+            
+            // Jika user sudah enroll, redirect ke student course detail view
+            if ($isEnrolled && $userRegistration) {
+                return redirect()->route('student.course-detail', $userRegistration->id);
+            }
+        }
 
-    return view('course-detail', compact('course', 'isEnrolled', 'userRegistration'));
-}
-
-    /**
+        return view('course-detail', compact('course', 'isEnrolled', 'userRegistration'));
+    }    /**
      * Delete course registration
      */
     public function destroy($id)

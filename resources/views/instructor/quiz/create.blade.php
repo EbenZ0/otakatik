@@ -63,19 +63,19 @@
 
                             <!-- Settings Grid -->
                             <div class="grid grid-cols-2 gap-4">
-                                <!-- Pass Score -->
+                                <!-- Passing Score -->
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-2">Skor Kelulusan (%)</label>
-                                    <input type="number" name="pass_score" required min="0" max="100"
-                                           value="{{ old('pass_score', $quiz->pass_score ?? 70) }}"
+                                    <input type="number" name="passing_score" required min="0" max="100"
+                                           value="{{ old('passing_score', $quiz->passing_score ?? 70) }}"
                                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
                                 </div>
 
-                                <!-- Time Limit (minutes) -->
+                                <!-- Duration Minutes -->
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Batas Waktu (Menit)</label>
-                                    <input type="number" name="time_limit" required min="1"
-                                           value="{{ old('time_limit', $quiz->time_limit ?? 30) }}"
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Durasi (Menit)</label>
+                                    <input type="number" name="duration_minutes" required min="5" max="300"
+                                           value="{{ old('duration_minutes', $quiz->duration_minutes ?? 30) }}"
                                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
                                 </div>
                             </div>
@@ -108,6 +108,35 @@
                                            {{ old('shuffle_answers', $quiz->shuffle_answers ?? false) ? 'checked' : '' }}
                                            class="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
                                     Acak Pilihan Jawaban
+                                </label>
+                            </div>
+
+                            <!-- Availability Dates -->
+                            <div class="grid grid-cols-2 gap-4">
+                                <!-- Available From -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Tersedia Mulai (Opsional)</label>
+                                    <input type="datetime-local" name="available_from"
+                                           value="{{ old('available_from', isset($quiz) && $quiz->available_from ? $quiz->available_from->format('Y-m-d\TH:i') : '') }}"
+                                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                                </div>
+
+                                <!-- Available Until -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Tersedia Hingga (Opsional)</label>
+                                    <input type="datetime-local" name="available_until"
+                                           value="{{ old('available_until', isset($quiz) && $quiz->available_until ? $quiz->available_until->format('Y-m-d\TH:i') : '') }}"
+                                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                                </div>
+                            </div>
+
+                            <!-- Publish Quiz -->
+                            <div class="flex items-center gap-2">
+                                <label class="flex items-center gap-2 text-sm font-medium text-gray-700">
+                                    <input type="checkbox" name="is_published" value="1"
+                                           {{ old('is_published', $quiz->is_published ?? false) ? 'checked' : '' }}
+                                           class="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
+                                    Publikasikan Quiz (Siswa bisa mengerjakan)
                                 </label>
                             </div>
 

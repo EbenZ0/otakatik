@@ -52,15 +52,15 @@
                     <div class="bg-gray-50 rounded-lg p-3 mb-4 text-sm text-gray-700 space-y-1">
                         <div class="flex justify-between">
                             <span>Waktu:</span>
-                            <strong>{{ $quiz->time_limit }} menit</strong>
+                            <strong>{{ $quiz->duration_minutes }} menit</strong>
                         </div>
                         <div class="flex justify-between">
                             <span>Skor Kelulusan:</span>
-                            <strong>{{ $quiz->pass_score }}%</strong>
+                            <strong>{{ $quiz->passing_score }}%</strong>
                         </div>
                         <div class="flex justify-between">
                             <span>Percobaan:</span>
-                            <strong>{{ $quiz->attempts_allowed }}x</strong>
+                            <strong>{{ $quiz->attempts_allowed }} kali</strong>
                         </div>
                     </div>
 
@@ -72,7 +72,7 @@
                             <strong class="text-green-700">{{ $submission->score ?? 'Pending' }}/100</strong>
                         </div>
                         @if($submission->score)
-                            @if($submission->score >= $quiz->pass_score)
+                            @if($submission->score >= $quiz->passing_score)
                                 <p class="text-green-700 font-semibold">LULUS</p>
                             @else
                                 <p class="text-red-700 font-semibold">TIDAK LULUS</p>
@@ -94,13 +94,13 @@
                                 Lihat Hasil
                             </a>
                             @if($quiz->submissions()->where('user_id', auth()->id())->count() < $quiz->attempts_allowed)
-                            <a href="{{ route('student.quiz.start', $quiz->id) }}" 
+                            <a href="{{ route('student.quiz.start', [$course->id, $quiz->id]) }}" 
                                class="flex-1 bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-4 rounded-lg text-center transition">
                                 🔄 Ulang
                             </a>
                             @endif
                         @else
-                            <a href="{{ route('student.quiz.start', $quiz->id) }}" 
+                            <a href="{{ route('student.quiz.start', [$course->id, $quiz->id]) }}" 
                                class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg text-center transition">
                                 Mulai Quiz
                             </a>

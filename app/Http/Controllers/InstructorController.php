@@ -380,7 +380,9 @@ class InstructorController extends Controller
 
         $submission->update([
             'grade' => $validated['score'],
-            'feedback' => $validated['feedback'] ?? null
+            'feedback' => $validated['feedback'] ?? null,
+            'status' => 'graded',
+            'graded_at' => now()
         ]);
 
         return back()->with('success', 'Submission berhasil dinilai!');
@@ -412,25 +414,29 @@ class InstructorController extends Controller
     public function getAssignmentJson($id)
     {
         if (!Auth::check() || !Auth::user()->is_instructor) {
-            abort(403, 'Unauthorized access.');
+            return response()->json(['error' => 'Unauthorized'], 403);
         }
 
-        $assignment = CourseAssignment::with('course')->findOrFail($id);
-        
-        // Check if instructor owns this course
-        if ($assignment->course->instructor_id !== Auth::id()) {
-            abort(403, 'Unauthorized action.');
-        }
+        try {
+            $assignment = CourseAssignment::with('course')->findOrFail($id);
+            
+            // Check if instructor owns this course
+            if ($assignment->course->instructor_id !== Auth::id()) {
+                return response()->json(['error' => 'Unauthorized'], 403);
+            }
 
-        return response()->json([
-            'id' => $assignment->id,
-            'title' => $assignment->title,
-            'description' => $assignment->description,
-            'instructions' => $assignment->instructions,
-            'due_date' => $assignment->due_date->format('Y-m-d\TH:i'),
-            'is_published' => $assignment->is_published,
-            'course_id' => $assignment->course_id,
-        ]);
+            return response()->json([
+                'id' => $assignment->id,
+                'title' => $assignment->title,
+                'description' => $assignment->description,
+                'instructions' => $assignment->instructions,
+                'due_date' => $assignment->due_date->format('Y-m-d\TH:i'),
+                'is_published' => $assignment->is_published,
+                'course_id' => $assignment->course_id,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Assignment not found'], 404);
+        }
     }
 
     /**

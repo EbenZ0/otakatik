@@ -22,24 +22,25 @@
             <!-- Notification Bell -->
             <div class="relative">
                 @php
-                    $unreadNotifications = Auth::user()->notifications()
-                        ->whereNull('read_at')
-                        ->orderBy('created_at', 'desc')
-                        ->get();
-                    $unreadCount = $unreadNotifications->count();
+                    $unreadNotifications = collect();
+                    $unreadCount = 0;
+                    if (Auth::check()) {
+                        $unreadNotifications = Auth::user()->notifications()
+                            ->whereNull('read_at')
+                            ->orderBy('created_at', 'desc')
+                            ->get();
+                        $unreadCount = $unreadNotifications->count();
+                    }
                 @endphp
-                
                 <button id="notificationBtn" class="relative text-gray-600 hover:text-orange-500 transition text-xl">
-                    
-                    <!-- Notification Badge -->
                     @if($unreadCount > 0)
                     <span class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
                         {{ $unreadCount > 9 ? '9+' : $unreadCount }}
                     </span>
                     @endif
                 </button>
-                
                 <!-- Notification Dropdown -->
+                @if(Auth::check())
                 <div id="notificationDropdown" class="hidden absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-xl z-50 max-h-96 overflow-y-auto">
                     <div class="p-4 border-b border-gray-200">
                         <h3 class="font-semibold text-gray-800">Notifications</h3>
@@ -78,15 +79,21 @@
                         <a href="{{ route('notifications.index') }}" class="text-sm text-orange-500 hover:text-orange-600 font-medium">View All Notifications</a>
                     </div>
                 </div>
+                @endif
             </div>
             
             <!-- Profile Dropdown -->
             <div class="relative">
                 <button id="profileBtn" class="flex items-center gap-3 hover:bg-gray-100 rounded-full p-1 transition">
                     <!-- Circular Profile Avatar -->
-                    <div class="w-10 h-10 bg-gradient-to-br from-orange-500 to-orange-600 rounded-full flex items-center justify-center text-white font-bold text-sm">
-                        {{ substr(Auth::user()->name ?? 'U', 0, 1) }}
-                    </div>
+                    @if(Auth::user()->profile_picture && Storage::disk('public')->exists(Auth::user()->profile_picture))
+                        <img src="{{ Storage::url(Auth::user()->profile_picture) }}" alt="{{ Auth::user()->name }}" 
+                             class="w-10 h-10 rounded-full object-cover border-2 border-orange-500">
+                    @else
+                        <div class="w-10 h-10 bg-gradient-to-br from-orange-500 to-orange-600 rounded-full flex items-center justify-center text-white font-bold text-sm">
+                            {{ substr(Auth::user()->name ?? 'U', 0, 1) }}
+                        </div>
+                    @endif
                 </button>
                 
                 <!-- Profile Dropdown Menu -->

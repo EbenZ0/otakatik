@@ -97,13 +97,13 @@
                         <div class="mb-6">
                             <label class="block text-sm font-medium text-gray-700 mb-2">Nilai (0-100)</label>
                             <input type="number" name="score" required min="0" max="100"
-                                   value="{{ old('score', $submission->score) }}"
+                                   value="{{ old('score', $submission->grade) }}"
                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-lg"
                                    placeholder="Masukkan nilai...">
                             <p class="text-sm text-gray-600 mt-2">
-                                @if(old('score', $submission->score) >= 70)
+                                @if(old('score', $submission->grade) >= 70)
                                     ✓ <span class="text-green-600 font-semibold">LULUS</span>
-                                @elseif(old('score', $submission->score) >= 0)
+                                @elseif(old('score', $submission->grade) >= 0)
                                     ✗ <span class="text-red-600 font-semibold">TIDAK LULUS</span>
                                 @endif
                             </p>
@@ -159,15 +159,15 @@
                     <!-- Current Status -->
                     <div class="bg-gray-50 rounded-lg border border-gray-200 p-4">
                         <h4 class="font-semibold text-gray-800 mb-3">📊 Status Saat Ini</h4>
-                        @if($submission->score !== null)
+                        @if($submission->grade !== null)
                             <div class="text-center mb-4">
-                                <p class="text-3xl font-bold {{ $submission->score >= 70 ? 'text-green-600' : 'text-red-600' }}">
-                                    {{ $submission->score }}
+                                <p class="text-3xl font-bold {{ $submission->grade >= 70 ? 'text-green-600' : 'text-red-600' }}">
+                                    {{ $submission->grade }}
                                 </p>
                                 <p class="text-xs text-gray-600">Nilai saat ini</p>
                             </div>
                             <div class="text-center">
-                                @if($submission->score >= 70)
+                                @if($submission->grade >= 70)
                                     <p class="text-green-700 font-semibold">✓ LULUS</p>
                                 @else
                                     <p class="text-red-700 font-semibold">✗ TIDAK LULUS</p>

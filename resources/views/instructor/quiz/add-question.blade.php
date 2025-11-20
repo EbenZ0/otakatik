@@ -298,6 +298,22 @@
     document.addEventListener('DOMContentLoaded', () => {
         const type = document.querySelector('input[name="question_type"]:checked').value;
         changeQuestionType(type);
+        
+        // Add event listeners to existing option inputs
+        document.querySelectorAll('input[name="options[]"]').forEach(input => {
+            input.addEventListener('input', updateCorrectAnswerOptions);
+        });
     });
+    
+    // Update listener when adding new option
+    const originalAddOption = window.addOption;
+    window.addOption = function() {
+        originalAddOption();
+        // Add listener to newly added input
+        const latestInput = document.querySelector('#optionsContainer input[name="options[]"]:last-of-type');
+        if (latestInput) {
+            latestInput.addEventListener('input', updateCorrectAnswerOptions);
+        }
+    };
 </script>
 @endsection

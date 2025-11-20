@@ -9,7 +9,6 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 // API Endpoints for Instructor (Protected)
-Route::middleware(['auth'])->group(function () {
-    // Get assignment details for editing
-    Route::get('/assignments/{id}', [InstructorController::class, 'getAssignmentJson'])->name('assignments.json');
-});
+Route::get('/assignments/{id}', [InstructorController::class, 'getAssignmentJson'])
+    ->middleware('auth')
+    ->name('api.assignments.json');
